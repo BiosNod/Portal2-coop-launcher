@@ -1,0 +1,105 @@
+/* Это надстройка над оригинальным bootstrap.css для исправления некоторых моментов*/
+
+/* Исправление вылета содержимого элемента аккордиона при его сворачивании (после сворачивания он пропадает,
+а нужно чтобы он пропадал по мере плавного закрытия)*/
+.accordion-body
+{
+    overflow: hidden;
+    position: relative;
+}
+
+/* Добавление анимаций для компонентов */
+@supports (-webkit-appearance: none) or (-moz-appearance: none)
+{
+    input[type=checkbox],
+    input[type=radio]
+    {
+        transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+    }
+
+    input[type=checkbox]:after,
+    input[type=radio]:after
+    {
+        transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+    }
+
+    input[type=checkbox]:checked,
+    input[type=radio]:checked
+    {
+        --d-o: .3s;
+        --d-t: .6s;
+        --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+    }
+}
+
+/* Для плавного изменения цвета фона */
+body, html
+{
+    -webkit-transition: background-color 500ms linear;
+    -ms-transition: background-color 500ms linear;
+    transition: background-color 500ms linear;
+}
+
+/*
+	Красивый скроллбар
+*/
+html{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(23, 85, 100, 0.65) rgba(0,0,0,0);
+}
+
+::-webkit-scrollbar
+{
+    width: 10px;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: #1F98A5;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive
+{
+    background: #1F98A5;
+}
+
+::-webkit-scrollbar
+{
+    background: var(--webkit-scrollbar-background);
+}
+
+/* Увеличение элементов, которые по умолчанию мелкие в теме бутстрапа*/
+input[type="radio"],
+input[type="checkbox"]
+{
+    transform: scale(1.4);
+    margin: 6px;
+    margin-right: 6px;
+    margin-right: 12px;
+}
+
+label
+{
+    margin-left: 7px;
+}
+
+input, label
+{
+    cursor: pointer;
+}
+
+.form-check
+{
+    margin: 0.7em;
+}

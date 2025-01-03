@@ -1,0 +1,39 @@
+{
+    "app_name": "TimeHelper",
+    "domain": "wofu",
+    "main": "index.html",
+    "name": "TimeHelper",
+    "version": "3.0",
+    "webexe_settings": {
+        "blacklist": "",
+        "custom_script": "",
+        "download_dir": "D:/software/oses/multi/nwjs",
+        "export_dir": "output",
+        "force_download": false,
+        "linux-x32": true,
+        "linux-x64": true,
+        "mac-x64": true,
+        "nw_compression_level": 0,
+        "nw_version": "0.51.0",
+        "output_pattern": "%(app_name)-%(version)-%(platform)",
+        "sdk_build": false,
+        "uncompressed_folder": false,
+        "whitelist": "",
+        "windows-x32": true,
+        "windows-x64": true
+    },
+    "webkit": {},
+    "window": {
+        "frame": true,
+        "height": 600,
+        "icon": "res/icon.png",
+        "id": "tsu",
+        "position": "center",
+        "resizable": true,
+        "show": true,
+        "title": "tsu",
+        "transparent": false,
+        "visible": true,
+        "width": 750
+    }
+}
