@@ -1,0 +1,19 @@
+html
+{
+    background-image: URL("/res/Izayoi.Sakuya.success.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #1e1e1e;
+}
+
+/*
+.accordion-body
+{
+    background: #ffffffa8;
+}
+*/
+
+.card
+{
+    display: inline-block !important;
+}
