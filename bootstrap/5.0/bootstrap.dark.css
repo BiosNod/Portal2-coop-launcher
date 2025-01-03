@@ -285,7 +285,7 @@
 [scheme="client_dark"] .badge.bg-dark { color: #000; }
 
 /* HTML AND BODY */
-body[scheme="client_dark"] {
+body[scheme="client_dark"], html[scheme="client_dark"],{
     background: #191818;
     color: #ddcfcf;
 }
