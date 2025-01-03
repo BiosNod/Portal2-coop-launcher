@@ -1,19 +1,38 @@
-html
-{
-    background-image: URL("/res/Izayoi.Sakuya.success.jpg");
-    background-repeat: no-repeat;
+html, body {
+    text-align: center;
+}
+
+body {
+    background-image: url(/images/background.png);
+    background-position: center;
+    background-size: contain;
+}
+
+.game-card {
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: inline-block;
+    margin: 15px;
+    width: 200px;
+    height: 277px;
     background-size: cover;
-    background-color: #1e1e1e;
+    background-position: center;
+    padding: 10px;
+    border-radius: 8px;
 }
 
-/*
-.accordion-body
-{
-    background: #ffffffa8;
+.game-card:hover {
+    transform: scale(1.05);
 }
-*/
 
-.card
-{
-    display: inline-block !important;
+.coop-settings {
+    background: rgba(13, 17, 23, 0.95);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.container {
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
 }

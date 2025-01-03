@@ -2,8 +2,8 @@
     "app_name": "TimeHelper",
     "domain": "wofu",
     "main": "index.html",
-    "name": "TimeHelper",
-    "version": "3.0",
+    "name": "portal.collection",
+    "version": "1.0",
     "webexe_settings": {
         "blacklist": "",
         "custom_script": "",
@@ -25,15 +25,15 @@
     "webkit": {},
     "window": {
         "frame": true,
-        "height": 600,
+        "width": 1125,
+        "height": 735,
         "icon": "res/icon.png",
         "id": "tsu",
         "position": "center",
-        "resizable": true,
+        "resizable": false,
         "show": true,
         "title": "tsu",
         "transparent": false,
-        "visible": true,
-        "width": 750
+        "visible": true
     }
 }
