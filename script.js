@@ -1,6 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const exec = require('child_process').execFile
+const child_process = require('child_process')
+const gui = require('nw.gui')
+const processWindows = require("node-process-windows")
+const activeWindow = require('active-window');
 
 // Пути к играм
 const MAIN_PATH = 'D:\\Sandbox\\alex\\Gaming\\drive\\D\\installed\\'
@@ -103,19 +106,109 @@ function getScreenResolution() {
     };
 }
 
+async function getActiveWindow() {
+    const window = await new Promise((resolve, reject) => {
+        activeWindow.getActiveWindow((window) => {
+            console.log("App: " + window.app);
+            console.log("Title: " + window.title);
+
+            if (!window || !window.app) reject('No any active window');
+            else resolve(window);
+        });
+    });
+
+    return window;
+}
+
+/**
+ * Устанавливает фокус на окно процесса с проверкой его активности.
+ * @param {string} processName - Имя исполняемого файла процесса (например, "portal2.exe").
+ * @param {number} maxAttempts - Максимальное количество попыток.
+ * @param {number} delay - Задержка между попытками (в миллисекундах).
+ */
+async function focusWindowWithValidation(processName, maxAttempts = 5, delay = 1000) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        console.log(`Attempt ${attempt}: Setting focus to "${processName}"...`);
+        const processes = await new Promise((resolve) =>
+            processWindows.getProcesses((err, processList) => resolve(processList || []))
+        );
+        console.log('Filtering processes...')
+        const targetProcesses = processes.filter(p => p.processName.indexOf(processName) >= 0);
+        if (targetProcesses.length > 0) {
+            console.log('Target process found:', targetProcesses)
+            processWindows.focusWindow(targetProcesses[0]);
+            console.log('Focused to:', targetProcesses[0])
+
+            await new Promise((resolve) => setTimeout(resolve, delay)); // Ждём перед проверкой
+
+            // Проверяем, стало ли окно активным
+            console.log('Trying to get active windows...')
+            // Получаем активное окно через active-window
+            const activeWin = await getActiveWindow();
+            console.log('Active windows fetched...')
+
+            if (activeWin && activeWin.app === processName) {
+                console.log(`Window for process "${processName}" is now active`);
+                return true;
+            } else {
+                console.warn(`Window "${processName}" is not active yet.`);
+            }
+        } else {
+            console.error(`Process "${processName}" not found.`);
+        }
+
+        // Если достигли последней попытки
+        if (attempt === maxAttempts) {
+            console.error(`Failed to set focus to "${processName}" after ${maxAttempts} attempts.`);
+            return false;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, delay)); // Ждём перед следующей попыткой
+    }
+}
+
 /**
  * Выполняет файл с указанными параметрами.
- * @param {string} fileName Имя файла для запуска.
- * @param {string[]} params Список параметров командной строки.
- * @param {string} cwd Рабочая директория.
  */
-function execute(fileName, params, cwd) {
+function startMod(mod) {
+    const fullPath = path.join(mod.path, mod.fileName);
+
+    if (!fs.existsSync(fullPath)) {
+        let msg = `File not found: ${fullPath}`
+        toastr.error(msg);
+        console.error(msg)
+        return;
+    }
+
+    const resolution = getScreenResolution();
+    const resolutionParams = ['-w', `${resolution.width}`, '-h', `${resolution.height}`];
+    const gameParams = [...mod.params, ...resolutionParams];
+
+   gui.Window.get().minimize()
+
+   /* let cmd =
+        `cd /d "${mod.path}"
+        start "" "${mod.fileName}" "${gameParams.join(' ')}"
+        del "%~f0"`
+    let batPath = 'start.bat'
+    fs.writeFileSync(batPath, cmd);
+    child_process.exec(batPath, (err, data) => {
+        console.log(err)
+        console.log(data.toString());
+    });*/
+
+    //let cmd = `cmd /c start "" "${fullPath}" ${gameParams.join(' ')}`
+    //let cmd = `"${fullPath}" ${gameParams.join(' ')}`
+    let cmd = `start "" "${fullPath}" ${gameParams.join(' ')}`
+
+    console.log(`Executing: ${cmd}`);
+
     return new Promise((resolve, reject) => {
-        exec(fileName, params, { cwd }, (err, data) => {
+        child_process.exec(cmd, (err, data) => {
             if (err) reject(err);
             else resolve(data);
         });
-    });
+    })
 }
 
 $(document).ready(() => {
@@ -130,28 +223,37 @@ $(document).ready(() => {
 
             card.click(() => {
                 if (!mod.path) {
-                    toastr.error('Path not found for the selected game');
+                    let msg = 'Path not found for the selected game'
+                    toastr.error(msg);
+                    console.error(msg)
                     return;
                 }
 
-                const fullPath = path.join(mod.path, mod.fileName);
-
-                if (!fs.existsSync(fullPath)) {
-                    toastr.error(`File not found: ${fullPath}`);
-                    return;
-                }
-
-                const resolution = getScreenResolution();
-                const resolutionParams = ['-w', `${resolution.width}`, '-h', `${resolution.height}`];
-                const gameParams = [...mod.params, ...resolutionParams];
-
-                execute(fullPath, gameParams, mod.path)
+                startMod(mod)
                     .then(() => {
                         console.log('Game launched successfully');
-                        process.exit(0); // Завершение приложения
+                        // Остаётся задать фокус окну, иначе в случае portal prelude будет чёрный экран после запуска
+                        // который исчезает только если переключиться на alt+tab или win+tab на другое окно и потом
+                        // снова на окно игры
+                        setTimeout(() => {
+                            const processName = path.basename(mod.fileName, path.extname(mod.fileName));
+                            focusWindowWithValidation(processName, 5, 1000) // 5 попыток, с задержкой 1 секунда
+                                .then((success) => {
+                                    if (success) {
+                                        console.log("Focus successfully set and validated.");
+                                        // Лаунчер больше не нужен
+                                        process.exit(0);
+                                    } else {
+                                        console.error("Failed to set and validate focus.");
+                                    }
+                                })
+                                .catch(err => console.error("Error during focus validation:", err));
+                        }, 1000); // Задержка запуска функции на 1 секунду
                     })
                     .catch(err => {
-                        toastr.error(`Failed to execute: ${err.message}`);
+                        let msg = `Failed to execute: ${err.message}`
+                        console.error(msg)
+                        toastr.error(msg);
                     });
             });
 
