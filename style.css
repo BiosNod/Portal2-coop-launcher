@@ -36,3 +36,20 @@ body {
     padding: 20px;
     margin-top: 20px;
 }
+
+.img-header {
+    width: 698px;
+    position: relative;
+    left: -155px;
+    filter: drop-shadow(0 0 2px rgb(0,0,0));
+}
+
+.toggle-coop {
+    margin-top: 3px
+}
+
+.controls {
+    position: fixed;
+    right: 100px;
+    top: 14px;
+}
