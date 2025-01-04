@@ -106,27 +106,13 @@ function getScreenResolution() {
     };
 }
 
-async function getActiveWindow() {
-    const window = await new Promise((resolve, reject) => {
-        activeWindow.getActiveWindow((window) => {
-            console.log("App: " + window.app);
-            console.log("Title: " + window.title);
-
-            if (!window || !window.app) reject('No any active window');
-            else resolve(window);
-        });
-    });
-
-    return window;
-}
-
 /**
  * Устанавливает фокус на окно процесса с проверкой его активности.
  * @param {string} processName - Имя исполняемого файла процесса (например, "portal2.exe").
  * @param {number} maxAttempts - Максимальное количество попыток.
  * @param {number} delay - Задержка между попытками (в миллисекундах).
  */
-async function focusWindowWithValidation(processName, maxAttempts = 5, delay = 1000) {
+async function focusWindowWithValidation(processName, maxAttempts = 2, delay = 1000) {
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         console.log(`Attempt ${attempt}: Setting focus to "${processName}"...`);
         const processes = await new Promise((resolve) =>
@@ -143,16 +129,25 @@ async function focusWindowWithValidation(processName, maxAttempts = 5, delay = 1
 
             // Проверяем, стало ли окно активным
             console.log('Trying to get active windows...')
-            // Получаем активное окно через active-window
-            const activeWin = await getActiveWindow();
-            console.log('Active windows fetched...')
 
-            if (activeWin && activeWin.app === processName) {
-                console.log(`Window for process "${processName}" is now active`);
-                return true;
-            } else {
-                console.warn(`Window "${processName}" is not active yet.`);
-            }
+            // Получаем активное окно через active-window
+            activeWindow.getActiveWindow((window) => {
+                console.log('Active window found')
+                console.log("App: " + window.app);
+                console.log("Title: " + window.title);
+
+                if (window && window.app)
+                {
+                    if (window.app === processName) {
+                        console.log(`Window for process "${processName}" is now active`);
+                        return true;
+                    } else {
+                        console.warn(`Window "${processName}" is not active yet.`);
+                    }
+                }
+                else
+                    console.warn('No any active window found')
+            });
         } else {
             console.error(`Process "${processName}" not found.`);
         }
@@ -237,15 +232,16 @@ $(document).ready(() => {
                         // снова на окно игры
                         setTimeout(() => {
                             const processName = path.basename(mod.fileName, path.extname(mod.fileName));
-                            focusWindowWithValidation(processName, 5, 1000) // 5 попыток, с задержкой 1 секунда
+                            focusWindowWithValidation(processName)
                                 .then((success) => {
                                     if (success) {
                                         console.log("Focus successfully set and validated.");
-                                        // Лаунчер больше не нужен
-                                        process.exit(0);
                                     } else {
                                         console.error("Failed to set and validate focus.");
                                     }
+
+                                    // Лаунчер больше не нужен
+                                    process.exit(0);
                                 })
                                 .catch(err => console.error("Error during focus validation:", err));
                         }, 1000); // Задержка запуска функции на 1 секунду
