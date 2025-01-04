@@ -35,5 +35,9 @@
         "title": "tsu",
         "transparent": false,
         "visible": true
+    },
+    "dependencies": {
+        "active-window": "^0.1.0",
+        "node-process-windows": "^0.0.2"
     }
 }
