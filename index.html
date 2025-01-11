@@ -66,11 +66,16 @@
             <span class="input-group-text" data-translate="portNote">Изменить нельзя, у сервера должен быть открыт этот порт</span>
         </div>
 
-        <!-- Timeout Input -->
+        <!-- Timeout Input 1 -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="timeout">Таймаут ожидания подключения</span>
-            <input type="text" class="form-control" id="timeoutInput" value="60">
-            <span class="input-group-text" data-translate="timeoutNote">Время ожидания подключения игрока в секундах</span>
+            <span class="input-group-text" data-translate="mp_wait_for_other_player_notconnecting_timeout">Maximum time that we wait in the transition loading screen after we fully loaded for partner to start loading</span>
+            <input type="text" class="form-control" id="mp_wait_for_other_player_notconnecting_timeout" value="60">
+        </div>
+
+        <!-- Timeout Input 2 -->
+        <div class="input-group mb-3">
+            <span class="input-group-text" data-translate="mp_wait_for_other_player_timeout">Maximum time that we wait in the transition loading screen for the other player</span>
+            <input type="text" class="form-control" id="mp_wait_for_other_player_timeout" value="100">
         </div>
 
         <!-- Command Preview for Server Creation -->
