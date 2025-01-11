@@ -44,6 +44,11 @@
                 <div class="coop-card-text" data-translate="connectServer">Подключиться к серверу</div>
                 <img src="/images/launcher/coop/connect.jpg" alt="Подключиться к серверу">
             </div>
+            <div class="game-card coop-card" id="splitScreenCard">
+                <div class="coop-card-overlay"></div>
+                <div class="coop-card-text" data-translate="splitScreenMode">Создать разделение экрана без сервера</div>
+                <img src="/images/launcher/coop/splitscreen.jpg" alt="Создать разделение экрана без сервера">
+            </div>
         </div>
     </div>
 
@@ -93,7 +98,7 @@
         </div>
     </div>
 
-    <!-- Connection Interface -->
+    <!-- Server Connection Interface -->
     <div class="connection d-none">
         <!-- IP Input -->
         <div class="input-group mb-3">
@@ -113,6 +118,49 @@
         <div class="text-center">
             <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
             <button class="btn btn-success connect-server" data-translate="connect">Подключиться к серверу</button>
+        </div>
+    </div>
+
+    <!-- Split Screen Mode Selection -->
+    <div class="split-screen-mode d-none">
+        <div class="split-screen-grid">
+            <div class="game-card split-screen-card" id="createSplitScreenCard">
+                <div class="coop-card-overlay"></div>
+                <div class="coop-card-text" data-translate="splitScreenMode">Создать разделение экрана без сервера</div>
+                <img src="/images/launcher/coop/splitscreen.jpg" alt="Создать разделение экрана без сервера">
+            </div>
+        </div>
+    </div>
+
+    <!-- Split Screen Creation Interface -->
+    <div class="split-screen-creation d-none">
+        <!-- Chapter and Map Selections -->
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="chapterSelect" data-translate="selectChapter">Выбор главы</label>
+            <select class="form-select" id="chapterSelectSplitScreen"></select>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="mapSelect" data-translate="selectMap">Выбор карты</label>
+            <select class="form-select" id="mapSelectSplitScreen"></select>
+        </div>
+
+        <!-- Info Message -->
+        <div class="alert alert-warning" role="alert" data-translate="splitScreenInfo">
+            Чтобы играть в режиме разделения экрана нужно иметь и клавиатуру и геймпад. После загрузки уровня нажмите Z чтобы переключить клавиатуру на длинного робота, а управление геймпадом должно остаться на коротком роботе. Если геймпад не работает, то убедитесь, что опция Контроллер (Геймпад) имеет статус "Включено" в настройках игры. Также вы можете пройти игру в этом режиме в одиночку, просто переключая управление клавиатурой между персонажами на букву Z.
+        </div>
+
+        <!-- Command Preview for Split Screen Creation -->
+        <div id="split-screen-command-preview" class="command-preview">
+            <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
+            <div id="split-screen-command-text" class="command-preview-text">
+                Пожалуйста, выберите главу и карту.
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
+            <button class="btn btn-success start-split-screen" data-translate="startServer">Запустить разделение экрана</button>
         </div>
     </div>
 </div>
