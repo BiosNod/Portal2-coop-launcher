@@ -1,9 +1,10 @@
 {
   "Main": [
+    "index.html",
+    "package.json",
+    "script.js",
     "scroll.css",
     "style.css",
-    "script.js",
-    "package.json",
-    "index.html"
+    "maps.js"
   ]
 }
