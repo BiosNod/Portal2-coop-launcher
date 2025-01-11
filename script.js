@@ -1,15 +1,15 @@
-const fs = require('fs')
-const path = require('path')
-const child_process = require('child_process')
-const gui = require('nw.gui')
-const processWindows = require("node-process-windows")
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
+const gui = require('nw.gui');
+const processWindows = require("node-process-windows");
 const activeWindow = require('active-window');
 
 // Пути к играм
-const MAIN_PATH = 'D:\\Sandbox\\alex\\Gaming\\drive\\D\\installed\\'
-const PORTAL_PRELUDE_PATH = MAIN_PATH + 'Portal + Portal Prelude NEW RUS\\'
-const PORTAL2_PATH = MAIN_PATH + 'Portal 2 NEW RUS\\'
-const PORTAL2_REVOLUTION_PATH = MAIN_PATH + 'Portal Revolution NEW RUS\\'
+const MAIN_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\';
+const PORTAL_PRELUDE_PATH = MAIN_PATH + 'Portal + Portal Prelude\\';
+const PORTAL2_PATH = MAIN_PATH + 'Portal 2\\';
+const PORTAL2_REVOLUTION_PATH = MAIN_PATH + 'Portal Revolution 1.6.1\\';
 
 // Коллекция игр
 let mods = {
@@ -19,49 +19,42 @@ let mods = {
         params: ['-steam', '-game', 'portal'],
         path: PORTAL_PRELUDE_PATH
     },
-
     'prelude': {
         image: 'portal_prelude.png',
         fileName: 'hl2.exe',
         params: ['-steam', '-game', 'prelude'],
         path: PORTAL_PRELUDE_PATH
     },
-
     'portal2': {
         image: 'portal2.png',
         fileName: 'portal2.exe',
         params: ['-steam', '-game', 'portal2'],
         path: PORTAL2_PATH
     },
-
     'portal_stories': {
         image: 'portal2_storiesmel.png',
         fileName: 'portal2.exe',
         params: ['-steam', '-game', 'portal_stories'],
         path: PORTAL2_PATH
     },
-
     'TWTM': {
         image: 'portal2_twtm.png',
         fileName: 'portal2.exe',
         params: ['-steam', '-game', 'TWTM'],
         path: PORTAL2_PATH
     },
-
     'aperturetag': {
         image: 'portal2_aperturetag.png',
         fileName: 'portal2.exe',
         params: ['-steam', '-game', 'aperturetag'],
         path: PORTAL2_PATH
     },
-
     'portalreloaded': {
         image: 'portal2_reloaded.png',
         fileName: 'portal2.exe',
         params: ['-steam', '-game', 'portalreloaded'],
         path: PORTAL2_PATH
     },
-
     'portalrevolution': {
         image: 'portal2_revolution.png',
         fileName: 'revolution.exe',
@@ -70,6 +63,7 @@ let mods = {
     }
 }
 
+// Комментарии для разработчиков
 // Запуск сервера в режиме коопа с картой
 // portal2.exe -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout 600 +mp_wait_for_other_player_timeout 120 +map mp_coop_start
 
@@ -82,18 +76,21 @@ let mods = {
 // Запуск игры без модов
 // portal2.exe
 // Полный код:
-// execute('portal2.exe', [], 'F:\\installed\\3d\\Portal 2 Mech')
+// execute('portal2.exe', [], 'F:\\installed\\3d\\Portal 2')
 
 // Запуск кастомной карты
 // portal2.exe -console +map mymaps_wust1
 // Полный код:
-// execute('portal2.exe', [' -console', '+map mymaps_wust1'], 'F:\\installed\\3d\\Portal 2 Mech')
+// execute('portal2.exe', [' -console', '+map mymaps_wust1'], 'F:\\installed\\3d\\Portal 2')
 
-// Также к любым portal2.exe нужно будет добавить разрешение текущего экрана так: -w 1920 -h 1080
-// (а лучше чтобы в интерфейсе была такая опция)
-// и ещё -steam (кроме мода revolution)
+// Также к любым portal2.exe (кроме мода revolution)
+// нужно будет добавить опцию стим: -steam
+// и разрешение текущего экрана: -w 1920 -h 1080
+// (т.к. некоторые версии portal при запуске ставят очень низкое разрешение)
+// Пример установки FullHD:
+// portal2.exe -steam -w 1920 -h 1080
 
-// Получение разрешения экрана с использованием NW.js
+// Получение разрешения экрана
 function getScreenResolution() {
     const gui = require('nw.gui');
     gui.Screen.Init();
@@ -162,16 +159,14 @@ async function focusWindowWithValidation(processName, maxAttempts = 2, delay = 1
     }
 }
 
-/**
- * Выполняет файл с указанными параметрами.
- */
+// Функция для запуска игры с указанными параметрами.
 function startMod(mod) {
     const fullPath = path.join(mod.path, mod.fileName);
 
     if (!fs.existsSync(fullPath)) {
-        let msg = `File not found: ${fullPath}`
+        let msg = `File not found: ${fullPath}`;
         toastr.error(msg);
-        console.error(msg)
+        console.error(msg);
         return;
     }
 
@@ -179,18 +174,18 @@ function startMod(mod) {
     const resolutionParams = ['-w', `${resolution.width}`, '-h', `${resolution.height}`];
     const gameParams = [...mod.params, ...resolutionParams];
 
-   gui.Window.get().minimize()
+    gui.Window.get().minimize();
 
-   /* let cmd =
+    /* let cmd =
         `cd /d "${mod.path}"
-        start "" "${mod.fileName}" "${gameParams.join(' ')}"
-        del "%~f0"`
-    let batPath = 'start.bat'
-    fs.writeFileSync(batPath, cmd);
-    child_process.exec(batPath, (err, data) => {
-        console.log(err)
-        console.log(data.toString());
-    });*/
+         start "" "${mod.fileName}" "${gameParams.join(' ')}"
+         del "%~f0"`
+     let batPath = 'start.bat'
+     fs.writeFileSync(batPath, cmd);
+     child_process.exec(batPath, (err, data) => {
+         console.log(err)
+         console.log(data.toString());
+     });*/
 
     //let cmd = `cmd /c start "" "${fullPath}" ${gameParams.join(' ')}`
     //let cmd = `"${fullPath}" ${gameParams.join(' ')}`
@@ -207,6 +202,10 @@ function startMod(mod) {
 }
 
 $(document).ready(() => {
+    let isCooperativeMode = false;
+    const { width: screenWidth, height: screenHeight } = getScreenResolution();
+
+    // Рендер карточек игр
     const renderGameCards = (posterStyle = 'main') => {
         $('#gameCards').empty();
 
@@ -257,14 +256,137 @@ $(document).ready(() => {
         });
     };
 
-    $('.poster-style').change(function() {
-        renderGameCards($(this).val());
-    });
+    // Сброс кооперативного режима
+    const resetCoopMode = () => {
+        $('.coop-mode-select, .server-creation, .connection').addClass('d-none');
+        $('.game-grid').removeClass('d-none');
+    };
 
+    // Обработчик кнопки "Кооперативный режим"
     $('.toggle-coop').click(function() {
-        $('.game-grid').toggleClass('d-none');
-        $('.coop-settings').toggleClass('d-none');
+        if (isCooperativeMode) {
+            resetCoopMode();
+            $(this).text('Кооперативный режим');
+            isCooperativeMode = false;
+        } else {
+            $('.game-grid').addClass('d-none');
+            $('.coop-mode-select').removeClass('d-none');
+            $(this).text('Одиночный режим');
+            isCooperativeMode = true;
+        }
     });
 
+    // Обработчик выбора "Создать сервер"
+    $('#createServerCard').click(function() {
+        $('.coop-mode-select').addClass('d-none');
+        $('.server-creation').removeClass('d-none');
+        populateChaptersAndMaps();
+    });
+
+    // Обработчик выбора "Подключиться к серверу"
+    $('#connectServerCard').click(function() {
+        $('.coop-mode-select').addClass('d-none');
+        $('.connection').removeClass('d-none');
+    });
+
+    // Обработчик кнопки "Назад"
+    $('.back-btn').click(function() {
+        $('.server-creation, .connection').addClass('d-none');
+        $('.coop-mode-select').removeClass('d-none');
+    });
+
+    // Заполнение глав и карт
+    const populateChaptersAndMaps = () => {
+        const chapterSelect = $('#chapterSelect');
+        const mapSelect = $('#mapSelect');
+
+        chapterSelect.empty().append('<option selected>Choose...</option>');
+        mapSelect.empty().append('<option selected>Choose...</option>');
+
+        Object.entries(coopMainChapters).forEach(([chapter, maps]) => {
+            chapterSelect.append(`<option value="${chapter}">${chapter}</option>`);
+        });
+
+        chapterSelect.change(function() {
+            const selectedChapter = $(this).val();
+            mapSelect.empty().append('<option selected>Choose...</option>');
+
+            if (selectedChapter && coopMainChapters[selectedChapter]) {
+                coopMainChapters[selectedChapter].forEach(map => {
+                    mapSelect.append(`<option value="${map.split(' - ')[1]}">${map}</option>`);
+                });
+            }
+            updateCommandPreview();
+        });
+
+        mapSelect.change(updateCommandPreview);
+    };
+
+    // Обновление предпросмотра команды для создания сервера
+    const updateCommandPreview = () => {
+        const chapter = $('#chapterSelect').val();
+        const map = $('#mapSelect').val();
+        const timeout = $('#timeoutInput').val() || '60';
+
+        if (chapter && map) {
+            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout} +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
+            $('#command-text').text(cmd);
+        } else {
+            $('#command-text').text('Пожалуйста, выберите главу и карту.');
+        }
+    };
+
+    // Обновление предпросмотра команды для подключения
+    const updateConnectionCommandPreview = () => {
+        const ip = $('#ipInput').val().trim();
+        if (ip) {
+            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
+            $('#connection-command-text').text(cmd);
+        } else {
+            $('#connection-command-text').text('Пожалуйста, введите IP-адрес сервера.');
+        }
+    };
+
+    // Обработчик кнопки "Запустить сервер"
+    $('#start-server').click(function() {
+        const chapter = $('#chapterSelect').val();
+        const map = $('#mapSelect').val();
+        const timeout = $('#timeoutInput').val() || '60';
+
+        if (chapter && map) {
+            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout} +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
+            executeCommand(cmd);
+        } else {
+            toastr.error('Пожалуйста, выберите главу и карту.');
+        }
+    });
+
+    // Обработчик кнопки "Подключиться к серверу"
+    $('#connect-server').click(function() {
+        const ip = $('#ipInput').val().trim();
+        if (ip) {
+            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
+            executeCommand(cmd);
+        } else {
+            toastr.error('Пожалуйста, введите IP-адрес сервера.');
+        }
+    });
+
+    // Функция для выполнения команды
+    const executeCommand = (cmd) => {
+        child_process.exec(cmd, { cwd: PORTAL2_PATH }, (err, data) => {
+            if (err) {
+                toastr.error(`Ошибка при выполнении команды: ${err.message}`);
+                console.error(err);
+            } else {
+                toastr.success('Команда успешно выполнена.');
+                console.log(data);
+            }
+        });
+    };
+
+    // Инициализация
     renderGameCards();
+    $('#timeoutInput').on('input', updateCommandPreview);
+    $('#ipInput').on('input', updateConnectionCommandPreview);
 });

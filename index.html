@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Portal 2 launcher</title>
+    <title>Portal 2 Launcher</title>
     <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.min.css">
     <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.dark.css">
-    <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.fixes.css">
     <link rel="stylesheet" href="/style.css"/>
     <link rel="stylesheet" href="/scroll.css">
     <link rel="stylesheet" href="/toastr/toastr.min.css">
@@ -27,56 +26,73 @@
         <div id="gameCards" class="g-4"></div>
     </div>
 
-    <div class="coop-settings d-none">
-        <div class="input-group mb-3">
-            <label class="input-group-text" for="languageSelect">Язык | Language</label>
-            <select class="form-select" id="languageSelect">
-                <option selected>Выберите | Choose...</option>
-                <option value="1">Русский</option>
-                <option value="2">English</option>
-            </select>
+    <!-- Cooperative Mode Selection -->
+    <div class="coop-mode-select d-none">
+        <div class="coop-grid">
+            <div class="game-card coop-card" id="createServerCard">
+                <div class="coop-card-overlay"></div>
+                <div class="coop-card-text">Создать сервер</div>
+                <img src="/images/launcher/coop/create.jpg" alt="Создать сервер">
+            </div>
+            <div class="game-card coop-card" id="connectServerCard">
+                <div class="coop-card-overlay"></div>
+                <div class="coop-card-text">Подключиться к серверу</div>
+                <img src="/images/launcher/coop/connect.jpg" alt="Подключиться к серверу">
+            </div>
         </div>
+    </div>
 
+    <!-- Server Creation Interface -->
+    <div class="server-creation d-none">
+        <!-- Chapter and Map Selections -->
         <div class="input-group mb-3">
             <label class="input-group-text" for="chapterSelect">Выбор главы</label>
-            <select class="form-select" id="chapterSelect">
-                <option selected>Choose...</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
+            <select class="form-select" id="chapterSelect"></select>
         </div>
-
         <div class="input-group mb-3">
             <label class="input-group-text" for="mapSelect">Выбор карты</label>
-            <select class="form-select" id="mapSelect">
-                <option selected>Choose...</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
+            <select class="form-select" id="mapSelect"></select>
         </div>
-
-        <div class="input-group mb-3">
-            <span class="input-group-text">IPV-4 адрес сервера:</span>
-            <input type="text" class="form-control" placeholder="x.x.x.x">
-        </div>
-
+        <!-- Port Input -->
         <div class="input-group mb-3">
             <span class="input-group-text">Порт сервера:</span>
             <input readonly type="text" value="27015" class="form-control">
             <span class="input-group-text">Изменить нельзя, у сервера должен быть открыт этот порт</span>
         </div>
-
+        <!-- Timeout Input -->
         <div class="input-group mb-3">
             <span class="input-group-text">Таймаут ожидания подключения</span>
-            <input type="text" class="form-control" value="60">
+            <input type="text" class="form-control" id="timeoutInput" value="60">
             <span class="input-group-text">Время ожидания подключения игрока в секундах</span>
         </div>
-
+        <!-- Command Preview -->
+        <div id="command-preview" style="margin-top: 20px;">
+            <strong>Команда запуска:</strong><br>
+            <pre id="command-text"></pre>
+        </div>
+        <!-- Action Buttons -->
         <div class="text-center">
-            <button class="btn btn-success me-3 start-server">Запустить сервер</button>
-            <button class="btn btn-success">Подключиться к серверу</button>
+            <button class="btn btn-secondary back-btn">Назад</button>
+            <button class="btn btn-success start-server">Запустить сервер</button>
+        </div>
+    </div>
+
+    <!-- Connection Interface -->
+    <div class="connection d-none">
+        <!-- IP Input -->
+        <div class="input-group mb-3">
+            <span class="input-group-text">IP-адрес сервера:</span>
+            <input type="text" class="form-control" id="ipInput" placeholder="x.x.x.x">
+        </div>
+        <!-- Command Preview -->
+        <div id="connection-command-preview" style="margin-top: 20px;">
+            <strong>Команда запуска:</strong><br>
+            <pre id="connection-command-text"></pre>
+        </div>
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-secondary back-btn">Назад</button>
+            <button class="btn btn-success connect-server">Подключиться к серверу</button>
         </div>
     </div>
 </div>
@@ -85,6 +101,6 @@
 <script src="/jquery-3.6.0.js"></script>
 <script src="/toastr/toastr.min.js"></script>
 <script src="/script.js"></script>
-
+<script src="/maps.js"></script>
 </body>
 </html>
