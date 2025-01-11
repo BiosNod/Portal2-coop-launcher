@@ -243,8 +243,6 @@ const executeCommand = (cmd) => {
                         console.error(msg);
                     }
 
-                    // Лаунчер больше не нужен
-                    process.exit(0);
                 })
                 .catch(err => {
                     let msg = "Error during focus validation:"
