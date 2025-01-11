@@ -11,6 +11,9 @@ const PORTAL_PRELUDE_PATH = MAIN_PATH + 'Portal + Portal Prelude\\';
 const PORTAL2_PATH = MAIN_PATH + 'Portal 2\\';
 const PORTAL2_REVOLUTION_PATH = MAIN_PATH + 'Portal Revolution 1.6.1\\';
 
+let isCooperativeMode = false;
+const { width: screenWidth, height: screenHeight } = getScreenResolution();
+
 // Коллекция игр
 let mods = {
     'portal': {
@@ -98,8 +101,9 @@ function getScreenResolution() {
     const primaryScreen = screens[0];
     console.log('primaryScreen', primaryScreen);
     return {
-        width: primaryScreen.bounds.width * primaryScreen.scaleFactor,
-        height: primaryScreen.bounds.height * primaryScreen.scaleFactor
+        // Math.floor to fix 2560.5 -> 2560
+        width: Math.floor(primaryScreen.bounds.width * primaryScreen.scaleFactor),
+        height: Math.floor(primaryScreen.bounds.height * primaryScreen.scaleFactor)
     };
 }
 
@@ -110,6 +114,9 @@ function getScreenResolution() {
  * @param {number} delay - Задержка между попытками (в миллисекундах).
  */
 async function focusWindowWithValidation(processName, maxAttempts = 2, delay = 1000) {
+    let msg = `Trying to set focus to process: ${processName}`
+    console.info(msg)
+    toastr.info(msg);
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         console.log(`Attempt ${attempt}: Setting focus to "${processName}"...`);
         const processes = await new Promise((resolve) =>
@@ -178,7 +185,7 @@ function startMod(mod) {
 
     /* let cmd =
         `cd /d "${mod.path}"
-         start "" "${mod.fileName}" "${gameParams.join(' ')}"
+         start "" "${mod.fileName}" ${gameParams.join(' ')}
          del "%~f0"`
      let batPath = 'start.bat'
      fs.writeFileSync(batPath, cmd);
@@ -191,87 +198,212 @@ function startMod(mod) {
     //let cmd = `"${fullPath}" ${gameParams.join(' ')}`
     let cmd = `start "" "${fullPath}" ${gameParams.join(' ')}`
 
+    executeCommand(cmd)
+}
+
+function getProcessNameFromCmd(cmd) {
+    // Регулярное выражение для поиска имени файла с расширением .exe
+    const match = cmd.match(/([^\\\/:"*?<>|]+\.exe)/i);
+    if (match) {
+        // Возвращаем имя файла без расширения
+        return path.basename(match[0], path.extname(match[0]));
+    }
+    throw new Error('Executable file name not found in command');
+}
+
+// Функция для выполнения команды
+const executeCommand = (cmd) => {
     console.log(`Executing: ${cmd}`);
 
-    return new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
         child_process.exec(cmd, (err, data) => {
             if (err) reject(err);
             else resolve(data);
         });
+    }).then(() => {
+        console.log('Game launched successfully');
+        // Остаётся задать фокус окну, иначе в случае portal prelude будет чёрный экран после запуска
+        // который исчезает только если переключиться на alt+tab или win+tab на другое окно и потом
+        // снова на окно игры
+        setTimeout(() => {
+            const processName = getProcessNameFromCmd(cmd);
+            focusWindowWithValidation(processName)
+                .then((success) => {
+                    if (success) {
+                        let msg = "Focus successfully set and validated."
+                        toastr.success(msg)
+                        console.log(msg);
+                    } else {
+                        let msg = "Failed to set and validate focus."
+                        toastr.success(msg)
+                        console.error(msg);
+                    }
+
+                    // Лаунчер больше не нужен
+                    process.exit(0);
+                })
+                .catch(err => {
+                    let msg = "Error during focus validation:"
+                    toastr.error(msg + err)
+                    console.error(msg, err);
+                });
+        }, 1000); // Задержка запуска функции на 1 секунду
     })
+    .catch(err => {
+        let msg = `Failed to execute: ${err.message}`
+        console.error(msg)
+        toastr.error(msg);
+    });
+};
+
+let currentLanguage = 'en'; // По умолчанию русский язык
+
+function translateUI(lang) {
+    $('[data-translate]').each(function() {
+        const key = $(this).data('translate');
+        $(this).text(translations[lang][key]);
+    });
+
+    // Обновление текста в полях команд
+    updateCreateServerCommandPreview();
+    updateConnectionCommandPreview();
 }
 
-$(document).ready(() => {
-    let isCooperativeMode = false;
-    const { width: screenWidth, height: screenHeight } = getScreenResolution();
+// Рендер карточек игр
+const renderGameCards = (posterStyle = 'main') => {
+    $('#gameCards').empty();
 
-    // Рендер карточек игр
-    const renderGameCards = (posterStyle = 'main') => {
-        $('#gameCards').empty();
-
-        Object.entries(mods).forEach(([key, mod]) => {
-            const card = $(`
+    Object.entries(mods).forEach(([key, mod]) => {
+        const card = $(`
                 <div class="game-card" style="background-image: url(/images/launcher/${posterStyle}/${mod.image})" alt="${key}">
                 </div>
             `);
 
-            card.click(() => {
-                if (!mod.path) {
-                    let msg = 'Path not found for the selected game'
-                    toastr.error(msg);
-                    console.error(msg)
-                    return;
-                }
+        card.click(() => {
+            if (!mod.path) {
+                let msg = 'Path not found for the selected game'
+                toastr.error(msg);
+                console.error(msg)
+                return;
+            }
 
-                startMod(mod)
-                    .then(() => {
-                        console.log('Game launched successfully');
-                        // Остаётся задать фокус окну, иначе в случае portal prelude будет чёрный экран после запуска
-                        // который исчезает только если переключиться на alt+tab или win+tab на другое окно и потом
-                        // снова на окно игры
-                        setTimeout(() => {
-                            const processName = path.basename(mod.fileName, path.extname(mod.fileName));
-                            focusWindowWithValidation(processName)
-                                .then((success) => {
-                                    if (success) {
-                                        console.log("Focus successfully set and validated.");
-                                    } else {
-                                        console.error("Failed to set and validate focus.");
-                                    }
-
-                                    // Лаунчер больше не нужен
-                                    process.exit(0);
-                                })
-                                .catch(err => console.error("Error during focus validation:", err));
-                        }, 1000); // Задержка запуска функции на 1 секунду
-                    })
-                    .catch(err => {
-                        let msg = `Failed to execute: ${err.message}`
-                        console.error(msg)
-                        toastr.error(msg);
-                    });
-            });
-
-            $('#gameCards').append(card);
+            startMod(mod)
         });
-    };
 
-    // Сброс кооперативного режима
-    const resetCoopMode = () => {
-        $('.coop-mode-select, .server-creation, .connection').addClass('d-none');
-        $('.game-grid').removeClass('d-none');
-    };
+        $('#gameCards').append(card);
+    });
+};
+
+// Сброс кооперативного режима
+const resetCoopMode = () => {
+    $('.coop-mode-select, .server-creation, .connection').addClass('d-none');
+    $('.game-grid').removeClass('d-none');
+};
+
+// Обновление предпросмотра команды для создания сервера
+const updateCreateServerCommandPreview = () => {
+    const chapter = $('#chapterSelect').val();
+    const map = $('#mapSelect').val();
+    const timeout = $('#timeoutInput').val() || '60';
+
+    if (chapter && map && map !== "") {
+        const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
+        $('#create-server-command-text').text(cmd);
+    } else {
+        $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+    }
+};
+
+// Обновление предпросмотра команды для подключения
+const updateConnectionCommandPreview = () => {
+    const ip = $('#ipInput').val().trim();
+    if (ip) {
+        const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
+        $('#connection-command-text').text(cmd);
+    } else {
+        $('#connection-command-text').text(translations[currentLanguage].pleaseEnterIP);
+    }
+};
+
+function translateChapterAndMapNames() {
+    const chapterSelect = $('#chapterSelect');
+    const mapSelect = $('#mapSelect');
+
+    // Очищаем и добавляем placeholder для глав
+    chapterSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectChapter}</option>`);
+
+    // Очищаем и добавляем placeholder для карт
+    mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
+
+    // Заполняем главы
+    Object.entries(coopMainChapters).forEach(([chapter, maps]) => {
+        if (chapter) { // Проверяем, что глава существует
+            const translatedChapter = chapter.split(' | ')[currentLanguage === 'en' ? 0 : 1];
+            chapterSelect.append(`<option value="${chapter}">${translatedChapter}</option>`);
+        }
+    });
+
+    // Обработчик изменения выбора главы
+    chapterSelect.change(function () {
+        const selectedChapter = $(this).val();
+        mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
+
+        if (selectedChapter && coopMainChapters[selectedChapter]) {
+            coopMainChapters[selectedChapter].forEach(map => {
+                if (map) { // Проверяем, что карта существует
+                    const [namePart, mapIdentifier] = map.split(' - ');
+                    const [englishName, russianName] = namePart.split(' | ');
+
+                    // Используем переведённое название карты
+                    const translatedMap = currentLanguage === 'en' ? englishName : russianName;
+
+                    // Добавляем карту с переведённым названием и идентификатором
+                    mapSelect.append(`<option value="${mapIdentifier}">${translatedMap}</option>`);
+                }
+            });
+        }
+        updateCreateServerCommandPreview();
+    });
+
+    // Обработчик изменения выбора карты
+    mapSelect.change(updateCreateServerCommandPreview);
+}
+
+$(document).ready(() => {
+    // Инициализация перевода
+    translateUI(currentLanguage);
+
+    $('.language-select').change(function() {
+        currentLanguage = $(this).val();
+        translateUI(currentLanguage);
+
+        // Обновляем текст кнопки в зависимости от состояния
+        if (isCooperativeMode) {
+            $('.toggle-coop').text(translations[currentLanguage].singleMode);
+        } else {
+            $('.toggle-coop').text(translations[currentLanguage].coopMode);
+        }
+
+        // Обновляем другие элементы интерфейса
+        translateChapterAndMapNames();
+        updateCreateServerCommandPreview();
+        updateConnectionCommandPreview();
+    });
+
+    $('.poster-style').change(function() {
+        renderGameCards($(this).val());
+    });
 
     // Обработчик кнопки "Кооперативный режим"
     $('.toggle-coop').click(function() {
         if (isCooperativeMode) {
             resetCoopMode();
-            $(this).text('Кооперативный режим');
+            $(this).text(translations[currentLanguage].coopMode); // Используем перевод
             isCooperativeMode = false;
         } else {
             $('.game-grid').addClass('d-none');
             $('.coop-mode-select').removeClass('d-none');
-            $(this).text('Одиночный режим');
+            $(this).text(translations[currentLanguage].singleMode); // Используем перевод
             isCooperativeMode = true;
         }
     });
@@ -280,7 +412,8 @@ $(document).ready(() => {
     $('#createServerCard').click(function() {
         $('.coop-mode-select').addClass('d-none');
         $('.server-creation').removeClass('d-none');
-        populateChaptersAndMaps();
+        // Заполнение глав и карт
+        translateChapterAndMapNames();
     });
 
     // Обработчик выбора "Подключиться к серверу"
@@ -295,98 +428,33 @@ $(document).ready(() => {
         $('.coop-mode-select').removeClass('d-none');
     });
 
-    // Заполнение глав и карт
-    const populateChaptersAndMaps = () => {
-        const chapterSelect = $('#chapterSelect');
-        const mapSelect = $('#mapSelect');
-
-        chapterSelect.empty().append('<option selected>Choose...</option>');
-        mapSelect.empty().append('<option selected>Choose...</option>');
-
-        Object.entries(coopMainChapters).forEach(([chapter, maps]) => {
-            chapterSelect.append(`<option value="${chapter}">${chapter}</option>`);
-        });
-
-        chapterSelect.change(function() {
-            const selectedChapter = $(this).val();
-            mapSelect.empty().append('<option selected>Choose...</option>');
-
-            if (selectedChapter && coopMainChapters[selectedChapter]) {
-                coopMainChapters[selectedChapter].forEach(map => {
-                    mapSelect.append(`<option value="${map.split(' - ')[1]}">${map}</option>`);
-                });
-            }
-            updateCommandPreview();
-        });
-
-        mapSelect.change(updateCommandPreview);
-    };
-
-    // Обновление предпросмотра команды для создания сервера
-    const updateCommandPreview = () => {
-        const chapter = $('#chapterSelect').val();
-        const map = $('#mapSelect').val();
-        const timeout = $('#timeoutInput').val() || '60';
-
-        if (chapter && map) {
-            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout} +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
-            $('#command-text').text(cmd);
-        } else {
-            $('#command-text').text('Пожалуйста, выберите главу и карту.');
-        }
-    };
-
-    // Обновление предпросмотра команды для подключения
-    const updateConnectionCommandPreview = () => {
-        const ip = $('#ipInput').val().trim();
-        if (ip) {
-            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
-            $('#connection-command-text').text(cmd);
-        } else {
-            $('#connection-command-text').text('Пожалуйста, введите IP-адрес сервера.');
-        }
-    };
-
     // Обработчик кнопки "Запустить сервер"
-    $('#start-server').click(function() {
+    $('.start-server').click(function() {
         const chapter = $('#chapterSelect').val();
         const map = $('#mapSelect').val();
         const timeout = $('#timeoutInput').val() || '60';
 
         if (chapter && map) {
-            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout} +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
+            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout}  +map ${map}`;
             executeCommand(cmd);
         } else {
-            toastr.error('Пожалуйста, выберите главу и карту.');
+            toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
         }
     });
 
-    // Обработчик кнопки "Подключиться к серверу"
-    $('#connect-server').click(function() {
+// Обработчик кнопки "Подключиться к серверу"
+    $('.connect-server').click(function() {
         const ip = $('#ipInput').val().trim();
         if (ip) {
             const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
             executeCommand(cmd);
         } else {
-            toastr.error('Пожалуйста, введите IP-адрес сервера.');
+            toastr.error(translations[currentLanguage].pleaseEnterIP);
         }
     });
-
-    // Функция для выполнения команды
-    const executeCommand = (cmd) => {
-        child_process.exec(cmd, { cwd: PORTAL2_PATH }, (err, data) => {
-            if (err) {
-                toastr.error(`Ошибка при выполнении команды: ${err.message}`);
-                console.error(err);
-            } else {
-                toastr.success('Команда успешно выполнена.');
-                console.log(data);
-            }
-        });
-    };
 
     // Инициализация
     renderGameCards();
-    $('#timeoutInput').on('input', updateCommandPreview);
+    $('#timeoutInput').on('input', updateCreateServerCommandPreview);
     $('#ipInput').on('input', updateConnectionCommandPreview);
 });
