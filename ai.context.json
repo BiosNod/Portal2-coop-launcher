@@ -1,10 +1,11 @@
 {
   "Main": [
     "index.html",
+    "maps.js",
     "package.json",
     "script.js",
     "scroll.css",
     "style.css",
-    "maps.js"
+    "lang.js"
   ]
 }
