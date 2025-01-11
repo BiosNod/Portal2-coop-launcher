@@ -304,14 +304,22 @@ const resetCoopMode = () => {
     $('.game-grid').removeClass('d-none');
 };
 
+const mp_wait_for_other_player_notconnecting_timeout_default = '60';
+const mp_wait_for_other_player_timeout_default = '100';
+
 // Обновление предпросмотра команды для создания сервера
 const updateCreateServerCommandPreview = () => {
     const chapter = $('#chapterSelect').val();
     const map = $('#mapSelect').val();
-    const timeout = $('#timeoutInput').val() || '60';
+    const mp_wait_for_other_player_notconnecting_timeout = $('#mp_wait_for_other_player_notconnecting_timeout').val() || mp_wait_for_other_player_notconnecting_timeout_default;
+    const mp_wait_for_other_player_timeout = $('#mp_wait_for_other_player_timeout').val() || mp_wait_for_other_player_timeout_default;
 
     if (chapter && map && map !== "") {
-        const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_timeout ${timeout} +map ${map}`;
+        const cmd = generateCommand('create', {
+            map,
+            mp_wait_for_other_player_notconnecting_timeout,
+            mp_wait_for_other_player_timeout
+        });
         $('#create-server-command-text').text(cmd);
     } else {
         $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
@@ -328,6 +336,26 @@ const updateConnectionCommandPreview = () => {
         $('#connection-command-text').text(translations[currentLanguage].pleaseEnterIP);
     }
 };
+
+function generateCommand(type, options = {}) {
+    const baseCmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console`;
+
+    if (type === 'create') {
+        const { map, mp_wait_for_other_player_notconnecting_timeout, mp_wait_for_other_player_timeout } = options;
+        return `${baseCmd} +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${mp_wait_for_other_player_notconnecting_timeout} +mp_wait_for_other_player_timeout ${mp_wait_for_other_player_timeout} +map ${map}`;
+    }
+
+    if (type === 'connect') {
+        const { ip } = options;
+        return `${baseCmd} +connect ${ip}`;
+    }
+
+    let msg = "Something is wrong with command generating, type: " + type + ", options: " + options
+    console.error(msg)
+    toastr.error(msg)
+
+    return '';
+}
 
 function translateChapterAndMapNames() {
     const chapterSelect = $('#chapterSelect');
@@ -436,10 +464,15 @@ $(document).ready(() => {
     $('.start-server').click(function() {
         const chapter = $('#chapterSelect').val();
         const map = $('#mapSelect').val();
-        const timeout = $('#timeoutInput').val() || '60';
+        const mp_wait_for_other_player_notconnecting_timeout = $('#mp_wait_for_other_player_notconnecting_timeout').val() || mp_wait_for_other_player_notconnecting_timeout_default;
+        const mp_wait_for_other_player_timeout = $('#mp_wait_for_other_player_timeout').val() || mp_wait_for_other_player_timeout_default;
 
         if (chapter && map) {
-            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${timeout}  +map ${map}`;
+            const cmd = generateCommand('create', {
+                map,
+                mp_wait_for_other_player_notconnecting_timeout,
+                mp_wait_for_other_player_timeout
+            });
             executeCommand(cmd);
         } else {
             toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
@@ -459,6 +492,6 @@ $(document).ready(() => {
 
     // Инициализация
     renderGameCards();
-    $('#timeoutInput').on('input', updateCreateServerCommandPreview);
+    $('#mp_wait_for_other_player_notconnecting_timeout, #mp_wait_for_other_player_timeout').on('input', updateCreateServerCommandPreview);
     $('#ipInput').on('input', updateConnectionCommandPreview);
 });

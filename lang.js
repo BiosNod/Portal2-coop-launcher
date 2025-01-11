@@ -20,7 +20,8 @@ const translations = {
         pleaseSelectChapterAndMap: "Please select a chapter and map.",
         pleaseEnterIP: "Please enter the server IP address.",
         errorExecutingCommand: "Error executing command:",
-        commandExecutedSuccessfully: "Command executed successfully."
+        mp_wait_for_other_player_notconnecting_timeout: "Maximum time that we wait in the transition loading screen after we fully loaded for partner to start loading",
+        mp_wait_for_other_player_timeout: "Maximum time that we wait in the transition loading screen for the other player",
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -43,6 +44,7 @@ const translations = {
         pleaseSelectChapterAndMap: "Пожалуйста, выберите главу и карту",
         pleaseEnterIP: "Пожалуйста, введите IP-адрес сервера.",
         errorExecutingCommand: "Ошибка при выполнении команды:",
-        commandExecutedSuccessfully: "Команда успешно выполнена."
+        mp_wait_for_other_player_notconnecting_timeout: "Максимальное время ожидания в экране загрузки после полной загрузки для начала загрузки партнера",
+        mp_wait_for_other_player_timeout: "Максимальное время ожидания в экране загрузки для другого игрока",
     }
 };
