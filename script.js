@@ -125,7 +125,13 @@ async function focusWindowWithValidation(processName, maxAttempts = 2, delay = 1
         console.log('Filtering processes...')
         const targetProcesses = processes.filter(p => p.processName.indexOf(processName) >= 0);
         if (targetProcesses.length > 0) {
-            console.log('Target process found:', targetProcesses)
+            let msg = 'Target process found: ' + targetProcesses
+            console.info(msg)
+            toastr.info(msg);
+
+            // minimize current launcher window
+            gui.Window.get().minimize();
+
             processWindows.focusWindow(targetProcesses[0]);
             console.log('Focused to:', targetProcesses[0])
 
@@ -180,8 +186,6 @@ function startMod(mod) {
     const resolution = getScreenResolution();
     const resolutionParams = ['-w', `${resolution.width}`, '-h', `${resolution.height}`];
     const gameParams = [...mod.params, ...resolutionParams];
-
-    gui.Window.get().minimize();
 
     /* let cmd =
         `cd /d "${mod.path}"
