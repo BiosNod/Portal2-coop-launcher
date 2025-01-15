@@ -54,12 +54,24 @@
 
     <!-- Server Creation Interface -->
     <div class="server-creation d-none">
-        <!-- Chapter and Map Selections -->
+        <!-- Добавляем в server-creation и split-screen-creation -->
         <div class="input-group mb-3">
+            <label class="input-group-text" for="mapSetSelect" data-translate="selectMapSet">Набор карт</label>
+            <select class="form-select" id="mapSetSelect">
+                <option value="official" selected>Portal 2 Official Coop</option>
+                <!-- Динамически добавляем папки с картами -->
+            </select>
+        </div>
+
+        <!-- Chapter and Map Selections -->
+        <!-- Блок с выбором главы -->
+        <div class="input-group mb-3 chapter-select">
             <label class="input-group-text" for="chapterSelect" data-translate="selectChapter">Выбор главы</label>
             <select class="form-select" id="chapterSelect"></select>
         </div>
-        <div class="input-group mb-3">
+
+        <!-- Блок с выбором карты -->
+        <div class="input-group mb-3 map-select">
             <label class="input-group-text" for="mapSelect" data-translate="selectMap">Выбор карты</label>
             <select class="form-select" id="mapSelect"></select>
         </div>

@@ -24,6 +24,7 @@ const translations = {
         mp_wait_for_other_player_timeout: "Maximum time that we wait in the transition loading screen for the other player",
         splitScreenMode: "Create split-screen without server",
         splitScreenInfo: "To play in split-screen mode, you need both a keyboard and a gamepad. After loading the level, press Z to switch the keyboard to the tall robot, while the gamepad control remains on the short robot. If the gamepad does not work, make sure that the Controller (Gamepad) option is set to 'Enabled' in the game settings. You can also play the game in this mode solo by switching keyboard control between characters using the Z key.",
+        pleaseSelectMap: "Please select a map.",
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -50,5 +51,6 @@ const translations = {
         mp_wait_for_other_player_timeout: "Максимальное время ожидания в экране загрузки для другого игрока",
         splitScreenMode: "Создать разделение экрана без сервера",
         splitScreenInfo: "Чтобы играть в режиме разделения экрана, нужно иметь и клавиатуру, и геймпад. После загрузки уровня нажмите Z, чтобы переключить клавиатуру на длинного робота, а управление геймпадом должно остаться на коротком роботе. Если геймпад не работает, убедитесь, что опция Контроллер (Геймпад) имеет статус 'Включено' в настройках игры. Также вы можете пройти игру в этом режиме в одиночку, просто переключая управление клавиатурой между персонажами на букву Z.",
+        pleaseSelectMap: "Пожалуйста, выберите карту.",
     }
 };

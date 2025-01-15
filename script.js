@@ -11,6 +11,9 @@ const PORTAL_PRELUDE_PATH = MAIN_PATH + 'Portal + Portal Prelude\\';
 const PORTAL2_PATH = MAIN_PATH + 'Portal 2\\';
 const PORTAL2_REVOLUTION_PATH = MAIN_PATH + 'Portal Revolution 1.6.1\\';
 
+// Путь к папке с картами
+const MAPS_DIR = path.join(PORTAL2_PATH, 'portal2', 'maps');
+
 let isCooperativeMode = false;
 const { width: screenWidth, height: screenHeight } = getScreenResolution();
 
@@ -307,20 +310,36 @@ const mp_wait_for_other_player_timeout_default = '100';
 
 // Обновление предпросмотра команды для создания сервера
 const updateCreateServerCommandPreview = () => {
+    const mapSet = $('#mapSetSelect').val();
     const chapter = $('#chapterSelect').val();
     const map = $('#mapSelect').val();
     const mp_wait_for_other_player_notconnecting_timeout = $('#mp_wait_for_other_player_notconnecting_timeout').val() || mp_wait_for_other_player_notconnecting_timeout_default;
     const mp_wait_for_other_player_timeout = $('#mp_wait_for_other_player_timeout').val() || mp_wait_for_other_player_timeout_default;
 
-    if (chapter && map && map !== "") {
-        const cmd = generateCommand('create', {
-            map,
-            mp_wait_for_other_player_notconnecting_timeout,
-            mp_wait_for_other_player_timeout
-        });
-        $('#create-server-command-text').text(cmd);
+    if (mapSet === 'official') {
+        // Для официального набора карт
+        if (chapter && map && map !== "") {
+            const cmd = generateCommand('create', {
+                map,
+                mp_wait_for_other_player_notconnecting_timeout,
+                mp_wait_for_other_player_timeout
+            });
+            $('#create-server-command-text').text(cmd);
+        } else {
+            $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+        }
     } else {
-        $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+        // Для неофициального набора карт
+        if (map && map !== "") {
+            const cmd = generateCommand('create', {
+                map,
+                mp_wait_for_other_player_notconnecting_timeout,
+                mp_wait_for_other_player_timeout
+            });
+            $('#create-server-command-text').text(cmd);
+        } else {
+            $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectMap);
+        }
     }
 };
 
@@ -371,10 +390,13 @@ $('.start-split-screen').click(function() {
 
 function generateCommand(type, options = {}) {
     const baseCmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console`;
+    const getMapIdentifer = (mapSet, map) => '"' + (mapSet !== 'official' ? path.basename(mapSet) + '/' : '') + map + '"'
 
     if (type === 'create') {
         const { map, mp_wait_for_other_player_notconnecting_timeout, mp_wait_for_other_player_timeout } = options;
-        return `${baseCmd} +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${mp_wait_for_other_player_notconnecting_timeout} +mp_wait_for_other_player_timeout ${mp_wait_for_other_player_timeout} +map ${map}`;
+        const mapSet = $('#mapSetSelect').val();
+        const mapIdentifer = getMapIdentifer(mapSet, map)
+        return `${baseCmd} +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${mp_wait_for_other_player_notconnecting_timeout} +mp_wait_for_other_player_timeout ${mp_wait_for_other_player_timeout} +map ${mapIdentifer}`;
     }
 
     if (type === 'connect') {
@@ -384,12 +406,14 @@ function generateCommand(type, options = {}) {
 
     if (type === 'split-screen') {
         const { map } = options;
-        return `${baseCmd} +sv_cheats 1 +ss_map ${map} +bindtoggle z in_forceuser`;
+        const mapSet = $('#mapSetSelect').val();
+        const mapIdentifer = getMapIdentifer(mapSet, map)
+        return `${baseCmd} +sv_cheats 1 +ss_map ${mapIdentifer} +bindtoggle z in_forceuser`;
     }
 
-    let msg = "Something is wrong with command generating, type: " + type + ", options: " + options
-    console.error(msg)
-    toastr.error(msg)
+    let msg = "Что-то пошло не так при генерации команды, тип: " + type + ", опции: " + options;
+    console.error(msg);
+    toastr.error(msg);
 
     return '';
 }
@@ -466,7 +490,75 @@ function translateChapterAndMapNames() {
     mapSelectSplitScreen.change(updateSplitScreenCommandPreview);
 }
 
+// Функция для получения списка наборов карт
+function getMapSets() {
+    const mapSets = [];
+
+    // Добавляем официальный набор карт
+    mapSets.push({ name: 'Portal 2 Official Coop', path: 'official' });
+
+    // Сканируем папку maps на наличие папок с COOP
+    if (fs.existsSync(MAPS_DIR)) {
+        const files = fs.readdirSync(MAPS_DIR);
+        files.forEach(file => {
+            const filePath = path.join(MAPS_DIR, file);
+            if (fs.statSync(filePath).isDirectory() && file.toUpperCase().endsWith('COOP')) {
+                mapSets.push({ name: file, path: filePath });
+            }
+        });
+    }
+    else
+        toastr.error('Directory with maps doesnt exist:  ' + MAPS_DIR)
+
+    return mapSets;
+}
+
+// Функция для заполнения выпадающего списка наборов карт
+function populateMapSetSelect() {
+    const mapSetSelect = $('#mapSetSelect');
+    mapSetSelect.empty().append(`<option value="official" selected>Portal 2 Official Coop</option>`);
+
+    const mapSets = getMapSets();
+    mapSets.forEach(mapSet => {
+        if (mapSet.path !== 'official') {
+            mapSetSelect.append(`<option value="${mapSet.path}">${mapSet.name}</option>`);
+        }
+    });
+}
+
 $(document).ready(() => {
+    // Заполняем список наборов карт
+    populateMapSetSelect();
+
+    // Обработчик изменения выбора набора карт
+    $('#mapSetSelect').change(function () {
+        const selectedMapSet = $(this).val();
+
+        if (selectedMapSet === 'official') {
+            // Если выбран официальный набор карт, показываем выбор глав и карт
+            $('.chapter-select').removeClass('d-none');
+            $('.map-select').removeClass('d-none');
+            translateChapterAndMapNames();
+        } else {
+            // Если выбран кастомный набор карт, скрываем выбор глав и показываем только карты
+            $('.chapter-select').addClass('d-none');
+            $('.map-select').removeClass('d-none');
+
+            // Очищаем и заполняем список карт из выбранной папки
+            const mapSelect = $('#mapSelect');
+            mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
+
+            const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
+            maps.forEach(map => {
+                const mapName = path.basename(map, '.bsp');
+                mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
+            });
+        }
+
+        // Обновляем предпросмотр команды
+        updateCreateServerCommandPreview();
+    });
+
     // Инициализация перевода
     translateUI(currentLanguage);
 
