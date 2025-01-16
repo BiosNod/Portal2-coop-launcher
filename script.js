@@ -5,10 +5,59 @@ const gui = require('nw.gui');
 const processWindows = require("node-process-windows");
 const activeWindow = require('active-window');
 
+const CONF_NAME = 'games.json'
+// Пути для поиска games.json
+const GAMES_CONFIG_PATHS = [
+    path.join(path.dirname(process.execPath), CONF_NAME), // Рядом с исполняемым файлом
+    path.join(process.cwd(), CONF_NAME) // В текущей рабочей папке
+];
+
+// Загрузка путей из games.json
+let gamesConfig = {};
+let configLoaded = false;
+
+for (const configPath of GAMES_CONFIG_PATHS) {
+    try {
+        if (fs.existsSync(configPath)) {
+            gamesConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            configLoaded = true;
+            console.log(`Конфигурация загружена из: ${configPath}`);
+            break; // Прерываем цикл, если файл найден
+        }
+    } catch (err) {
+        const msg = `Ошибка при чтении файла games.json (${configPath}): ${err.message}`;
+        toastr.error(msg);
+        console.error(msg);
+    }
+}
+
+if (!configLoaded) {
+    const msg = translations[currentLanguage].gamesConfigNotFound;
+    toastr.error(msg);
+    console.error(msg);
+}
+
 // Пути к играм
-const PORTAL_PRELUDE_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal + Portal Prelude\\';
-const PORTAL2_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal 2\\';
-const PORTAL2_REVOLUTION_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal Revolution 1.6.1\\';
+const PORTAL_PRELUDE_PATH = gamesConfig.PORTAL_PRELUDE_PATH;
+const PORTAL2_PATH = gamesConfig.PORTAL2_PATH;
+const PORTAL2_REVOLUTION_PATH = gamesConfig.PORTAL2_REVOLUTION_PATH;
+
+// Проверка наличия путей
+if (!PORTAL_PRELUDE_PATH) {
+    const msg = translations[currentLanguage].portalPreludePathMissing;
+    toastr.error(msg);
+    console.error(msg);
+}
+if (!PORTAL2_PATH) {
+    const msg = translations[currentLanguage].portal2PathMissing;
+    toastr.error(msg);
+    console.error(msg);
+}
+if (!PORTAL2_REVOLUTION_PATH) {
+    const msg = translations[currentLanguage].portalRevolutionPathMissing;
+    toastr.error(msg);
+    console.error(msg);
+}
 
 // Путь к папке с картами
 const MAPS_DIR = path.join(PORTAL2_PATH, 'portal2', 'maps');

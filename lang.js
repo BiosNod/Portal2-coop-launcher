@@ -35,6 +35,10 @@ const translations = {
         startSingleMap: "Launch map",
         pleaseSelectMapSet: "Select map set",
         terminalCommand: "Change level or connect command in-game using terminal (~ key):",
+        gamesConfigNotFound: "games.json not found in the executable directory or working directory.",
+        portalPreludePathMissing: "Path to Portal Prelude is missing in games.json.",
+        portal2PathMissing: "Path to Portal 2 is missing in games.json.",
+        portalRevolutionPathMissing: "Path to Portal Revolution is missing in games.json.",
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -67,5 +71,9 @@ const translations = {
         startSingleMap: "Запустить карту",
         pleaseSelectMapSet: "Выберите карту",
         terminalCommand: "Команда смены карты или подключения в игре через терминал (~ тильда):",
+        gamesConfigNotFound: "Файл games.json не найден в директории исполняемого файла или рабочей директории.",
+        portalPreludePathMissing: "Путь к Portal Prelude отсутствует в games.json.",
+        portal2PathMissing: "Путь к Portal 2 отсутствует в games.json.",
+        portalRevolutionPathMissing: "Путь к Portal Revolution отсутствует в games.json.",
     }
 };
