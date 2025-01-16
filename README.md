@@ -81,6 +81,8 @@
 
 Нужно загрузить отсюда https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/releases архив под вашу версию nwjs, распаковать и заменить файл ffmpeg.dll в корне nwjs (не в корне лаунчера).
 
+Трейлеры к играм загружаем отсюда https://drive.google.com/file/d/1DO_fDLR5BwwfJe7u6m7CdgtqPAo1rAvN/view?usp=sharing и раскаковываем в директорию `trailers` в корне проекта лаунчера.
+
 Если все запустилось и работает, то загружаем `Web2Exe` https://github.com/nwutils/Web2Executable/releases для дальнейшей сборки лаунчера.
 
 Убедитесь, что все настройки верны и без проблем:
