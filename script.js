@@ -272,6 +272,8 @@ function translateUI(lang) {
 
 // Рендер карточек игр
 const renderGameCards = (posterStyle = 'main') => {
+    console.info('render game cards with style: ' + posterStyle)
+
     $('#gameCards').empty();
 
     Object.entries(mods).forEach(([key, mod]) => {
@@ -589,6 +591,19 @@ function renameFoldersWithSpaces(directory) {
 }
 
 $(document).ready(() => {
+    // Определяем язык по умолчанию
+    currentLanguage = getCookie('language') || getSystemLanguage();
+
+    // Сохраняем набор иконок в куки при изменении
+    $('.poster-style')
+        .change(function() {
+            const selectedPosterStyle = $(this).val();
+            renderGameCards(selectedPosterStyle);
+            setCookie('posterStyle', selectedPosterStyle, 365); // Сохраняем на год
+        })
+        .val(getCookie('posterStyle') ||  'main')
+        .change();
+
     $('#mapSetSelect').change(function() {
         handleMapSetChange(
             $(this),
@@ -650,15 +665,15 @@ $(document).ready(() => {
     // Инициализация перевода
     translateUI(currentLanguage);
 
-    $('.language-select').change(function() {
-        // Меняем язык
-        currentLanguage = $(this).val();
-        translateUI(currentLanguage); // Обновляем интерфейс
-    });
-
-    $('.poster-style').change(function() {
-        renderGameCards($(this).val());
-    });
+    $('.language-select')
+        .change(function() {
+            // Меняем язык
+            currentLanguage = $(this).val();
+            translateUI(currentLanguage);
+            setCookie('language', currentLanguage, 365); // Сохраняем на год
+        })
+        .val(currentLanguage)
+        .change();
 
     // Обработчик кнопки "Дополнительные одиночные карты"
     $('.toggle-single-map').click(function() {
@@ -821,7 +836,4 @@ $(document).ready(() => {
             }
         }
     });
-
-    // Инициализация
-    renderGameCards();
 });

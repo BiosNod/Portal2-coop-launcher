@@ -1,3 +1,8 @@
+function getSystemLanguage() {
+    const systemLanguage = navigator.language || navigator.userLanguage;
+    return systemLanguage.startsWith('ru') ? 'ru' : 'en';
+}
+
 const translations = {
     en: {
         iconSet1: "Icon Set 1",
