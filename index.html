@@ -13,6 +13,7 @@
 <div>
     <div>
         <img src="/images/header.png" class="img-header">
+        <!-- Controls -->
         <div class="controls">
             <select class="form-select poster-style" style="width: auto">
                 <option value="main" data-translate="iconSet1">Набор иконок 1</option>
@@ -22,14 +23,17 @@
                 <option value="en" data-translate="english">English</option>
                 <option value="ru" data-translate="russian">Русский</option>
             </select>
-            <button class="btn btn-warning toggle-coop" data-translate="coopMode">Кооперативный режим</button>
+            <!-- Добавляем две отдельные кнопки -->
+            <button class="btn btn-dark toggle-coop" data-translate="coopMode">Кооперативный режим</button>
+            <button class="btn btn-dark toggle-single-map" data-translate="singleMapMode">Дополнительные одиночные карты</button>
+            <!-- Добавляем кнопку "Одиночный режим" -->
+            <button class="btn btn-dark toggle-single-mode d-none" data-translate="singleMode">Одиночный режим</button>
         </div>
     </div>
 
     <!-- Game Grid -->
     <div class="game-grid">
         <div id="gameCards" class="g-4"></div>
-        <button class="btn btn-dark toggle-single-map" data-translate="singleMapMode">Дополнительные одиночные карты</button>
     </div>
 
     <!-- Cooperative Mode Selection -->
@@ -55,34 +59,32 @@
 
     <!-- Single Map Creation Interface -->
     <div class="single-map-creation d-none">
-        <div class="server-creation">
-            <!-- Добавляем выбор набора карт -->
-            <div class="input-group mb-3">
-                <label class="input-group-text" for="mapSetSelectSingleMap" data-translate="selectMapSet">Набор карт</label>
-                <select class="form-select" id="mapSetSelectSingleMap">
-                    <option value="" selected data-translate="pleaseSelectMapSet">Выберите набор карт</option> <!-- Используем перевод -->
-                    <!-- Динамически добавляем папки с картами -->
-                </select>
-            </div>
+        <!-- Добавляем выбор набора карт -->
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="mapSetSelectSingleMap" data-translate="selectMapSet">Набор карт</label>
+            <select class="form-select" id="mapSetSelectSingleMap">
+                <option value="" selected data-translate="pleaseSelectMapSet">Выберите набор карт</option> <!-- Используем перевод -->
+                <!-- Динамически добавляем папки с картами -->
+            </select>
+        </div>
 
-            <!-- Блок с выбором карты -->
-            <div class="input-group mb-3">
-                <label class="input-group-text" for="mapSelectSingleMap" data-translate="selectMap">Выбор карты</label>
-                <select class="form-select" id="mapSelectSingleMap"></select>
-            </div>
+        <!-- Блок с выбором карты -->
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="mapSelectSingleMap" data-translate="selectMap">Выбор карты</label>
+            <select class="form-select" id="mapSelectSingleMap"></select>
+        </div>
 
-            <!-- Command Preview for Single Map Creation -->
-            <div id="single-map-command-preview" class="command-preview">
-                <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-                <div id="single-map-command-text" class="command-preview-text">
-                    Пожалуйста, выберите карту.
-                </div>
+        <!-- Command Preview for Single Map Creation -->
+        <div id="single-map-command-preview" class="command-preview">
+            <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
+            <div id="single-map-command-text" class="command-preview-text">
+                Пожалуйста, выберите карту.
             </div>
+        </div>
 
-            <!-- Action Buttons -->
-            <div class="text-center">
-                <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
-            </div>
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
         </div>
     </div>
 

@@ -73,25 +73,17 @@ html, body {
 }
 
 /* Server Creation and Connection Interfaces */
-.server-creation, .connection {
+.server-creation, .connection, .single-map-creation {
     background: rgba(13, 17, 23, 0.95);
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
 }
 
-/* Controls */
-.controls {
-    position: fixed;
-    right: 100px;
-    top: 14px;
-}
-
 /* Header Image */
 .img-header {
     width: 500px;
     position: relative;
-    left: -280px;
     filter: drop-shadow(0 0 2px rgb(0, 0, 0));
 }
 
@@ -198,4 +190,13 @@ html, body {
 
 #splitScreenCard {
     width: 400px;
+}
+
+/* Controls */
+.controls {
+    position: fixed;
+    margin-left: 20%;
+    bottom: 14px;
+    display: flex;
+    gap: 10px;
 }
