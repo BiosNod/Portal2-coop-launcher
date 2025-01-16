@@ -11,7 +11,7 @@
 [scheme="client_dark"] .btn-link { color: #fff; }
 [scheme="client_dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
 
-[scheme="client_dark"] .btn-dark { color: #000; background-color: #f8f9fa; border-color: #f8f9fa; }
+/*[scheme="client_dark"] .btn-dark { color: #000; background-color: #f8f9fa; border-color: #f8f9fa; }
 [scheme="client_dark"] .btn-dark:hover { color: #000; background-color: #f9fafb; border-color: #f9fafb; }
 [scheme="client_dark"] .btn-check:focus + .btn-dark,
 [scheme="client_dark"] .btn-dark:focus { color: #000; background-color: #f9fafb; border-color: #f9fafb; box-shadow: 0 0 0 0.25rem rgba(211, 212, 213, 0.5); }
@@ -26,7 +26,7 @@
 [scheme="client_dark"] .btn-dark.active:focus,
 [scheme="client_dark"] .show > .btn-dark.dropdown-toggle:focus { box-shadow: 0 0 0 0.25rem rgba(211, 212, 213, 0.5); }
 [scheme="client_dark"] .btn-dark:disabled,
-[scheme="client_dark"] .btn-dark.disabled { color: #000; background-color: #f8f9fa; border-color: #f8f9fa; }
+[scheme="client_dark"] .btn-dark.disabled { color: #000; background-color: #f8f9fa; border-color: #f8f9fa; }*/
 
 [scheme="client_dark"] .btn-light { color: #fff; background-color: #212529; border-color: #212529; }
 [scheme="client_dark"] .btn-light:hover { color: #fff; background-color: #1c1f23; border-color: #1a1e21; }
