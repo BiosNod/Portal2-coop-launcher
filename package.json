@@ -26,7 +26,7 @@
     "window": {
         "frame": true,
         "width": 1125,
-        "height": 735,
+        "height": 770,
         "icon": "res/icon.png",
         "id": "tsu",
         "position": "center",
