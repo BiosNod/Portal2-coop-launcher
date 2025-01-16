@@ -1,0 +1,90 @@
+/* Video Modal */
+.video-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.video-modal-content {
+    height: 100%;
+}
+
+.close-video-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 99999;
+}
+
+.close-video-modal:hover {
+    color: #ccc;
+}
+
+#trailerVideo {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+/* Game Card Overlay */
+.game-card-overlay {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    border-radius: 5px;
+    overflow: hidden;
+    left: 0;
+    width: 100%;
+    height: 100px; /* Увеличиваем высоту для двух кнопок */
+    background-color: rgba(0, 0, 0, 0.7);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Расстояние между кнопками */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.game-card:hover .game-card-overlay {
+    opacity: 1;
+    display: flex;
+}
+
+/* Кнопка "Играть" */
+.play-button {
+    background-color: #4CAF50; /* Темно-зеленый цвет */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.play-button:hover {
+    background-color: #45a049; /* Темно-зеленый цвет при наведении */
+}
+
+/* Кнопка "Трейлер" */
+.trailer-button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.trailer-button:hover {
+    background-color: #e64a19;
+}
