@@ -196,8 +196,8 @@ html, body {
 /* Controls */
 .controls {
     position: fixed;
-    margin-left: 20%;
     bottom: 14px;
-    display: flex;
     gap: 10px;
+    text-align: center;
+    width: 100%;
 }
