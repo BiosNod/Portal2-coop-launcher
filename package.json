@@ -1,43 +1,41 @@
 {
-    "app_name": "TimeHelper",
-    "domain": "wofu",
+    "app_name": "Portal2COOPLauncher",
+    "dependencies": {
+        "active-window": "^0.1.0",
+        "node-process-windows": "^0.0.2"
+    },
     "main": "index.html",
     "name": "portal.collection",
     "version": "1.0",
     "webexe_settings": {
         "blacklist": "",
         "custom_script": "",
-        "download_dir": "D:/software/oses/multi/nwjs",
+        "download_dir": "D:/software/oses/crossplatform/nwjs",
         "export_dir": "output",
         "force_download": false,
-        "linux-x32": true,
+        "linux-x32": false,
         "linux-x64": true,
-        "mac-x64": true,
+        "mac-x64": false,
         "nw_compression_level": 0,
-        "nw_version": "0.51.0",
+        "nw_version": "0.62.0",
         "output_pattern": "%(app_name)-%(version)-%(platform)",
         "sdk_build": false,
         "uncompressed_folder": false,
         "whitelist": "",
-        "windows-x32": true,
+        "windows-x32": false,
         "windows-x64": true
     },
     "webkit": {},
     "window": {
+        "exe_icon": "images\\launcher\\icon\\Portal-simple-full.png",
         "frame": true,
-        "width": 1125,
         "height": 790,
-        "icon": "res/icon.png",
-        "id": "tsu",
+        "mac_icon": "images\\launcher\\icon\\Portal-simple-full.png",
         "position": "center",
         "resizable": false,
         "show": true,
-        "title": "tsu",
         "transparent": false,
-        "visible": true
-    },
-    "dependencies": {
-        "active-window": "^0.1.0",
-        "node-process-windows": "^0.0.2"
+        "visible": true,
+        "width": 1125
     }
 }

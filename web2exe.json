@@ -2,18 +2,18 @@
     "webexe_settings": {
         "blacklist": "",
         "custom_script": "",
-        "download_dir": "D:/software/oses/crossplatform/nwjs",
-        "export_dir": "output",
+        "download_dir": "D:/software/programs/pc/programming/nwjs",
+        "export_dir": "../",
         "force_download": false,
         "linux-x32": false,
-        "linux-x64": true,
+        "linux-x64": false,
         "mac-x64": false,
         "nw_compression_level": 0,
         "nw_version": "0.62.0",
         "output_pattern": "%(app_name)-%(version)-%(platform)",
         "sdk_build": false,
-        "uncompressed_folder": false,
-        "whitelist": "",
+        "uncompressed_folder": true,
+        "whitelist": "*",
         "windows-x32": false,
         "windows-x64": true
     }
