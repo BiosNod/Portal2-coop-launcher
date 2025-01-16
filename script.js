@@ -6,10 +6,9 @@ const processWindows = require("node-process-windows");
 const activeWindow = require('active-window');
 
 // Пути к играм
-const MAIN_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\';
-const PORTAL_PRELUDE_PATH = MAIN_PATH + 'Portal + Portal Prelude\\';
-const PORTAL2_PATH = MAIN_PATH + 'Portal 2\\';
-const PORTAL2_REVOLUTION_PATH = MAIN_PATH + 'Portal Revolution 1.6.1\\';
+const PORTAL_PRELUDE_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal + Portal Prelude\\';
+const PORTAL2_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal 2\\';
+const PORTAL2_REVOLUTION_PATH = 'E:\\Sandbox\\alex\\Gaming\\drive\\F\\installed\\3d\\Portal Revolution 1.6.1\\';
 
 // Путь к папке с картами
 const MAPS_DIR = path.join(PORTAL2_PATH, 'portal2', 'maps');
