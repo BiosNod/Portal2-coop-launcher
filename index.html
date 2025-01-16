@@ -29,6 +29,7 @@
     <!-- Game Grid -->
     <div class="game-grid">
         <div id="gameCards" class="g-4"></div>
+        <button class="btn btn-dark toggle-single-map" data-translate="singleMapMode">Дополнительные одиночные карты</button>
     </div>
 
     <!-- Cooperative Mode Selection -->
@@ -48,6 +49,39 @@
                 <div class="coop-card-overlay"></div>
                 <div class="coop-card-text" data-translate="splitScreenMode">Создать разделение экрана без сервера</div>
                 <img src="/images/launcher/coop/splitscreen.jpg" alt="Создать разделение экрана без сервера">
+            </div>
+        </div>
+    </div>
+
+    <!-- Single Map Creation Interface -->
+    <div class="single-map-creation d-none">
+        <div class="server-creation">
+            <!-- Добавляем выбор набора карт -->
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="mapSetSelectSingleMap" data-translate="selectMapSet">Набор карт</label>
+                <select class="form-select" id="mapSetSelectSingleMap">
+                    <option value="" selected data-translate="pleaseSelectMapSet">Выберите набор карт</option> <!-- Используем перевод -->
+                    <!-- Динамически добавляем папки с картами -->
+                </select>
+            </div>
+
+            <!-- Блок с выбором карты -->
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="mapSelectSingleMap" data-translate="selectMap">Выбор карты</label>
+                <select class="form-select" id="mapSelectSingleMap"></select>
+            </div>
+
+            <!-- Command Preview for Single Map Creation -->
+            <div id="single-map-command-preview" class="command-preview">
+                <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
+                <div id="single-map-command-text" class="command-preview-text">
+                    Пожалуйста, выберите карту.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
             </div>
         </div>
     </div>
@@ -173,7 +207,7 @@
         <!-- Command Preview for Split Screen Creation -->
         <div id="split-screen-command-preview" class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-            <div id="split-screen-command-text" class="command-preview-text">
+            <div id="split-screen-command-text" class="command-preview-text" data-translate="pleaseSelectChapterAndMap">
                 Пожалуйста, выберите главу и карту.
             </div>
         </div>
