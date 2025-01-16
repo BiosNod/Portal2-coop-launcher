@@ -487,6 +487,9 @@ function translateChapterAndMapNames() {
 function getMapSets() {
     const mapSets = [];
 
+    // Переименовываем папки с пробелами
+    renameFoldersWithSpaces(MAPS_DIR);
+
     // Добавляем официальный набор карт
     mapSets.push({ name: 'Portal 2 Official Coop', path: 'official' });
 
@@ -499,9 +502,9 @@ function getMapSets() {
                 mapSets.push({ name: file, path: filePath });
             }
         });
+    } else {
+        toastr.error('Директория с картами не найдена: ' + MAPS_DIR);
     }
-    else
-        toastr.error('Directory with maps doesnt exist:  ' + MAPS_DIR)
 
     return mapSets;
 }
@@ -543,6 +546,31 @@ function handleMapSetChange(selectedMapSet, mapSelectId, chapterSelectId, update
 
     // Обновляем предпросмотр команды
     updateCommandPreview();
+}
+
+function renameFoldersWithSpaces(directory) {
+    if (!fs.existsSync(directory)) {
+        console.error(`Папка не найдена: ${directory}`);
+        return;
+    }
+
+    const folders = fs.readdirSync(directory).filter(file => {
+        const filePath = path.join(directory, file);
+        return fs.statSync(filePath).isDirectory() && file.includes(' ');
+    });
+
+    folders.forEach(folder => {
+        const oldPath = path.join(directory, folder);
+        const newFolderName = folder.replace(/\s+/g, '-'); // Заменяем пробелы на тире
+        const newPath = path.join(directory, newFolderName);
+
+        try {
+            fs.renameSync(oldPath, newPath);
+            console.log(`Переименовано: ${oldPath} -> ${newPath}`);
+        } catch (err) {
+            console.error(`Ошибка при переименовании ${oldPath}:`, err);
+        }
+    });
 }
 
 $(document).ready(() => {
