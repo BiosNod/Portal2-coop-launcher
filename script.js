@@ -317,8 +317,8 @@ const updateCreateServerCommandPreview = () => {
     const mp_wait_for_other_player_timeout = $('#mp_wait_for_other_player_timeout').val() || mp_wait_for_other_player_timeout_default;
 
     if (mapSet === 'official') {
-        // Для официального набора карт
-        if (chapter && map && map !== "") {
+        // Для официального набора карт проверяем и главу, и карту
+        if (chapter && map) {
             const cmd = generateCommand('create', {
                 map,
                 mp_wait_for_other_player_notconnecting_timeout,
@@ -329,8 +329,8 @@ const updateCreateServerCommandPreview = () => {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
         }
     } else {
-        // Для неофициального набора карт
-        if (map && map !== "") {
+        // Для неофициального набора карт проверяем только карту
+        if (map) {
             const cmd = generateCommand('create', {
                 map,
                 mp_wait_for_other_player_notconnecting_timeout,
@@ -339,6 +339,31 @@ const updateCreateServerCommandPreview = () => {
             $('#create-server-command-text').text(cmd);
         } else {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectMap);
+        }
+    }
+};
+
+// Обновление предпросмотра команды для создания разделения экрана
+const updateSplitScreenCommandPreview = () => {
+    const mapSet = $('#mapSetSelectSplitScreen').val(); // Получаем выбранный набор карт
+    const chapter = $('#chapterSelectSplitScreen').val();
+    const map = $('#mapSelectSplitScreen').val();
+
+    if (mapSet === 'official') {
+        // Для официального набора карт проверяем и главу, и карту
+        if (chapter && map) {
+            const cmd = generateCommand('split-screen', { map });
+            $('#split-screen-command-text').text(cmd);
+        } else {
+            $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+        }
+    } else {
+        // Для неофициального набора карт проверяем только карту
+        if (map) {
+            const cmd = generateCommand('split-screen', { map });
+            $('#split-screen-command-text').text(cmd);
+        } else {
+            $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectMap);
         }
     }
 };
@@ -353,40 +378,6 @@ const updateConnectionCommandPreview = () => {
         $('#connection-command-text').text(translations[currentLanguage].pleaseEnterIP);
     }
 };
-
-// Обработчик выбора "Создать разделение экрана"
-$('#splitScreenCard').click(function() {
-    $('.coop-mode-select').addClass('d-none');
-    $('.split-screen-creation').removeClass('d-none');
-    // Заполнение глав и карт
-    translateChapterAndMapNames();
-});
-
-// Обновление предпросмотра команды для создания разделения экрана
-const updateSplitScreenCommandPreview = () => {
-    const chapter = $('#chapterSelectSplitScreen').val();
-    const map = $('#mapSelectSplitScreen').val();
-
-    if (chapter && map) {
-        const cmd = generateCommand('split-screen', { map });
-        $('#split-screen-command-text').text(cmd);
-    } else {
-        $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
-    }
-};
-
-// Обработчик кнопки "Запустить разделение экрана"
-$('.start-split-screen').click(function() {
-    const chapter = $('#chapterSelectSplitScreen').val();
-    const map = $('#mapSelectSplitScreen').val();
-
-    if (chapter && map) {
-        const cmd = generateCommand('split-screen', { map });
-        executeCommand(cmd);
-    } else {
-        toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
-    }
-});
 
 function generateCommand(type, options = {}) {
     const baseCmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console`;
@@ -406,7 +397,7 @@ function generateCommand(type, options = {}) {
 
     if (type === 'split-screen') {
         const { map } = options;
-        const mapSet = $('#mapSetSelect').val();
+        const mapSet = $('#mapSetSelectSplitScreen').val();
         const mapIdentifer = getMapIdentifer(mapSet, map)
         return `${baseCmd} +sv_cheats 1 +ss_map ${mapIdentifer} +bindtoggle z in_forceuser`;
     }
@@ -432,14 +423,16 @@ function translateChapterAndMapNames() {
     mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
     mapSelectSplitScreen.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
 
-    // Заполняем главы
-    Object.entries(coopMainChapters).forEach(([chapter, maps]) => {
-        if (chapter) { // Проверяем, что глава существует
-            const translatedChapter = chapter.split(' | ')[currentLanguage === 'en' ? 0 : 1];
-            chapterSelect.append(`<option value="${chapter}">${translatedChapter}</option>`);
-            chapterSelectSplitScreen.append(`<option value="${chapter}">${translatedChapter}</option>`);
-        }
-    });
+    // Заполняем главы только если выбран официальный набор карт
+    if ($('#mapSetSelect').val() === 'official') {
+        Object.entries(coopMainChapters).forEach(([chapter, maps]) => {
+            if (chapter) { // Проверяем, что глава существует
+                const translatedChapter = chapter.split(' | ')[currentLanguage === 'en' ? 0 : 1];
+                chapterSelect.append(`<option value="${chapter}">${translatedChapter}</option>`);
+                chapterSelectSplitScreen.append(`<option value="${chapter}">${translatedChapter}</option>`);
+            }
+        });
+    }
 
     // Обработчик изменения выбора главы
     chapterSelect.change(function () {
@@ -514,8 +507,8 @@ function getMapSets() {
 }
 
 // Функция для заполнения выпадающего списка наборов карт
-function populateMapSetSelect() {
-    const mapSetSelect = $('#mapSetSelect');
+function populateMapSetSelect(selectorId) {
+    const mapSetSelect = $(selectorId); // Используем переданный ID
     mapSetSelect.empty().append(`<option value="official" selected>Portal 2 Official Coop</option>`);
 
     const mapSets = getMapSets();
@@ -526,37 +519,49 @@ function populateMapSetSelect() {
     });
 }
 
-$(document).ready(() => {
-    // Заполняем список наборов карт
-    populateMapSetSelect();
+function handleMapSetChange(selectedMapSet, mapSelectId, chapterSelectId, updateCommandPreview) {
+    if (selectedMapSet === 'official') {
+        // Если выбран официальный набор карт, показываем выбор глав и карт
+        $(chapterSelectId).closest('.input-group').removeClass('d-none'); // Показываем выбор главы
+        $(mapSelectId).closest('.input-group').removeClass('d-none'); // Показываем выбор карты
+        translateChapterAndMapNames();
+    } else {
+        // Если выбран кастомный набор карт, скрываем выбор глав и показываем только карты
+        $(chapterSelectId).closest('.input-group').addClass('d-none'); // Скрываем выбор главы
+        $(mapSelectId).closest('.input-group').removeClass('d-none'); // Показываем выбор карты
 
-    // Обработчик изменения выбора набора карт
+        // Очищаем и заполняем список карт из выбранной папки
+        const mapSelect = $(mapSelectId);
+        mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
+
+        const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
+        maps.forEach(map => {
+            const mapName = path.basename(map, '.bsp');
+            mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
+        });
+    }
+
+    // Обновляем предпросмотр команды
+    updateCommandPreview();
+}
+
+$(document).ready(() => {
+    // Заполняем список наборов карт для обычного коопа
+    populateMapSetSelect('#mapSetSelect');
+
+    // Заполняем список наборов карт для разделения экрана
+    populateMapSetSelect('#mapSetSelectSplitScreen');
+
+    // Обработчик для обычного коопа
     $('#mapSetSelect').change(function () {
         const selectedMapSet = $(this).val();
+        handleMapSetChange(selectedMapSet, '#mapSelect', '#chapterSelect', updateCreateServerCommandPreview);
+    });
 
-        if (selectedMapSet === 'official') {
-            // Если выбран официальный набор карт, показываем выбор глав и карт
-            $('.chapter-select').removeClass('d-none');
-            $('.map-select').removeClass('d-none');
-            translateChapterAndMapNames();
-        } else {
-            // Если выбран кастомный набор карт, скрываем выбор глав и показываем только карты
-            $('.chapter-select').addClass('d-none');
-            $('.map-select').removeClass('d-none');
-
-            // Очищаем и заполняем список карт из выбранной папки
-            const mapSelect = $('#mapSelect');
-            mapSelect.empty().append(`<option value="" selected>${translations[currentLanguage].selectMap}</option>`);
-
-            const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
-            maps.forEach(map => {
-                const mapName = path.basename(map, '.bsp');
-                mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
-            });
-        }
-
-        // Обновляем предпросмотр команды
-        updateCreateServerCommandPreview();
+    // Обработчик для разделения экрана
+    $('#mapSetSelectSplitScreen').change(function () {
+        const selectedMapSet = $(this).val();
+        handleMapSetChange(selectedMapSet, '#mapSelectSplitScreen', '#chapterSelectSplitScreen', updateSplitScreenCommandPreview);
     });
 
     // Инициализация перевода
@@ -619,24 +624,73 @@ $(document).ready(() => {
 
     // Обработчик кнопки "Запустить сервер"
     $('.start-server').click(function() {
+        const mapSet = $('#mapSetSelect').val();
         const chapter = $('#chapterSelect').val();
         const map = $('#mapSelect').val();
         const mp_wait_for_other_player_notconnecting_timeout = $('#mp_wait_for_other_player_notconnecting_timeout').val() || mp_wait_for_other_player_notconnecting_timeout_default;
         const mp_wait_for_other_player_timeout = $('#mp_wait_for_other_player_timeout').val() || mp_wait_for_other_player_timeout_default;
 
-        if (chapter && map) {
-            const cmd = generateCommand('create', {
-                map,
-                mp_wait_for_other_player_notconnecting_timeout,
-                mp_wait_for_other_player_timeout
-            });
-            executeCommand(cmd);
+        if (mapSet === 'official') {
+            // Для официального набора карт проверяем и главу, и карту
+            if (chapter && map) {
+                const cmd = generateCommand('create', {
+                    map,
+                    mp_wait_for_other_player_notconnecting_timeout,
+                    mp_wait_for_other_player_timeout
+                });
+                executeCommand(cmd);
+            } else {
+                toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
+            }
         } else {
-            toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
+            // Для неофициального набора карт проверяем только карту
+            if (map) {
+                const cmd = generateCommand('create', {
+                    map,
+                    mp_wait_for_other_player_notconnecting_timeout,
+                    mp_wait_for_other_player_timeout
+                });
+                executeCommand(cmd);
+            } else {
+                toastr.error(translations[currentLanguage].pleaseSelectMap);
+            }
         }
     });
 
-// Обработчик кнопки "Подключиться к серверу"
+    // Обработчик кнопки "Запустить разделение экрана"
+    $('.start-split-screen').click(function() {
+        const mapSet = $('#mapSetSelectSplitScreen').val(); // Получаем выбранный набор карт
+        const chapter = $('#chapterSelectSplitScreen').val();
+        const map = $('#mapSelectSplitScreen').val();
+
+        if (mapSet === 'official') {
+            // Для официального набора карт проверяем и главу, и карту
+            if (chapter && map) {
+                const cmd = generateCommand('split-screen', { map });
+                executeCommand(cmd);
+            } else {
+                toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
+            }
+        } else {
+            // Для неофициального набора карт проверяем только карту
+            if (map) {
+                const cmd = generateCommand('split-screen', { map });
+                executeCommand(cmd);
+            } else {
+                toastr.error(translations[currentLanguage].pleaseSelectMap);
+            }
+        }
+    });
+
+    // Обработчик выбора "Создать разделение экрана"
+    $('#splitScreenCard').click(function() {
+        $('.coop-mode-select').addClass('d-none');
+        $('.split-screen-creation').removeClass('d-none');
+        // Заполнение глав и карт
+        translateChapterAndMapNames();
+    });
+
+    // Обработчик кнопки "Подключиться к серверу"
     $('.connect-server').click(function() {
         const ip = $('#ipInput').val().trim();
         if (ip) {

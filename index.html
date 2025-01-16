@@ -146,6 +146,15 @@
 
     <!-- Split Screen Creation Interface -->
     <div class="split-screen-creation d-none">
+        <!-- Добавляем выбор набора карт -->
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="mapSetSelectSplitScreen" data-translate="selectMapSet">Набор карт</label>
+            <select class="form-select" id="mapSetSelectSplitScreen">
+                <option value="official" selected>Portal 2 Official Coop</option>
+                <!-- Динамически добавляем папки с картами -->
+            </select>
+        </div>
+
         <!-- Chapter and Map Selections -->
         <div class="input-group mb-3">
             <label class="input-group-text" for="chapterSelect" data-translate="selectChapter">Выбор главы</label>
