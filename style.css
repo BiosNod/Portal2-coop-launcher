@@ -202,3 +202,27 @@ html, body {
     text-align: center;
     width: 100%;
 }
+
+.source-code {
+    position: fixed;
+    top: 17px;
+    right: 70px;
+}
+
+.game-grid {
+    padding: 15px;
+}
+
+.btn-biosnod {
+    top: 3px;
+}
+
+.btn-dixen18 {
+    top: 44px;
+}
+
+.btn-dixen18, .btn-biosnod {
+    left: 23px;
+    right: unset;
+    width: 15em;
+}
