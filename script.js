@@ -320,25 +320,41 @@ function translateUI(lang) {
 
 // Рендер карточек игр
 const renderGameCards = (posterStyle = 'main') => {
-    console.info('render game cards with style: ' + posterStyle)
+    console.info('render game cards with style: ' + posterStyle);
 
     $('#gameCards').empty();
 
+    const trailers = {
+        'portal': 'trailers/Portal 1 AMV.mp4',
+        'prelude': 'trailers/Portal Prelude Official Trailer.mp4',
+        'portal2': 'trailers/Portal 2 Teaser Trailer.mp4',
+        'portal_stories': 'trailers/Portal Stories Mel - Trailer.mp4',
+        'TWTM': 'trailers/TWTM Trailer Eng.mp4',
+        'aperturetag': 'trailers/Portal 2 - Aperture Tag Trailer.mp4',
+        'portalreloaded': 'trailers/Portal Reloaded - Reveal Trailer.mp4',
+        'portalrevolution': 'trailers/Portal Revolution - Trailer.mp4'
+    };
+
     Object.entries(mods).forEach(([key, mod]) => {
         const card = $(`
-                <div class="game-card" style="background-image: url(/images/launcher/${posterStyle}/${mod.image})" alt="${key}">
+            <div class="game-card" style="background-image: url(/images/launcher/${posterStyle}/${mod.image})" alt="${key}">
+                <div class="game-card-overlay">
+                    <button class="play-button" data-translate="play">Играть</button>
+                    <button class="trailer-button" data-video="${trailers[key]}" data-translate="trailer">Трейлер</button>
                 </div>
-            `);
+            </div>
+        `);
 
-        card.click(() => {
+        // Обработчик для кнопки "Играть"
+        card.find('.play-button').click(() => {
             if (!mod.path) {
-                let msg = 'Path not found for the selected game'
+                let msg = 'Path not found for the selected game';
                 toastr.error(msg);
-                console.error(msg)
+                console.error(msg);
                 return;
             }
 
-            startMod(mod)
+            startMod(mod);
         });
 
         $('#gameCards').append(card);
@@ -651,6 +667,30 @@ $(document).ready(() => {
         })
         .val(getCookie('posterStyle') ||  'main')
         .change();
+
+    // Обработчик для кнопки "Трейлер"
+    $(document).on('click', '.trailer-button', function(event) {
+        event.stopPropagation(); // Предотвращаем всплытие события
+        const videoSrc = $(this).data('video');
+        $('#trailerVideo source').attr('src', videoSrc);
+        $('#trailerVideo')[0].load();
+        $('#trailerVideo')[0].play(); // Запускаем воспроизведение
+        $('#videoModal').fadeIn();
+    });
+
+    // Обработчик для кнопки закрытия
+    $('#closeVideoModal').click(function() {
+        $('#trailerVideo')[0].pause();
+        $('#videoModal').fadeOut();
+    });
+
+    // Закрытие модального окна при клике вне его
+    $(window).click(function(event) {
+        if ($(event.target).is('#videoModal')) {
+            $('#trailerVideo')[0].pause();
+            $('#videoModal').fadeOut();
+        }
+    });
 
     $('#mapSetSelect').change(function() {
         handleMapSetChange(

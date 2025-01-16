@@ -7,10 +7,21 @@
     <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.dark.css">
     <link rel="stylesheet" href="/style.css"/>
     <link rel="stylesheet" href="/scroll.css">
+    <link rel="stylesheet" href="/video.css">
     <link rel="stylesheet" href="/toastr/toastr.min.css">
 </head>
 <body scheme="client_dark">
-<div>
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <span id="closeVideoModal" class="close-video-modal">&times;</span>
+            <video id="trailerVideo" controls autoplay>
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
     <div>
         <img src="/images/header.png" class="img-header">
         <!-- Controls -->
@@ -241,7 +252,6 @@
             <button class="btn btn-success start-split-screen" data-translate="startServer">Запустить разделение экрана</button>
         </div>
     </div>
-</div>
 
 <script src="/bootstrap/5.0/bootstrap.bundle.min.js"></script>
 <script src="/jquery-3.6.0.js"></script>
