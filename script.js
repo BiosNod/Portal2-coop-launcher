@@ -309,53 +309,61 @@ const updateCreateServerCommandPreview = () => {
     if (mapSet === 'official') {
         // Для официального набора карт проверяем и главу, и карту
         if (chapter && map) {
-            const cmd = generateCommand('create', {
+            const { cmd, terminalCmd } = generateCommand('create', {
                 map,
                 mapSet,
                 mp_wait_for_other_player_notconnecting_timeout,
                 mp_wait_for_other_player_timeout
             });
             $('#create-server-command-text').text(cmd);
+            $('#create-server-command-terminal-text').text(terminalCmd); // Терминальная команда
         } else {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+            $('#create-server-command-terminal-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
         }
     } else {
         // Для неофициального набора карт проверяем только карту
         if (map) {
-            const cmd = generateCommand('create', {
+            const { cmd, terminalCmd } = generateCommand('create', {
                 map,
                 mapSet,
                 mp_wait_for_other_player_notconnecting_timeout,
                 mp_wait_for_other_player_timeout
             });
             $('#create-server-command-text').text(cmd);
+            $('#create-server-command-terminal-text').text(terminalCmd); // Терминальная команда
         } else {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectMap);
+            $('#create-server-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
         }
     }
 };
 
 // Обновление предпросмотра команды для создания разделения экрана
 const updateSplitScreenCommandPreview = () => {
-    const mapSet = $('#mapSetSelectSplitScreen').val(); // Получаем выбранный набор карт
+    const mapSet = $('#mapSetSelectSplitScreen').val();
     const chapter = $('#chapterSelectSplitScreen').val();
     const map = $('#mapSelectSplitScreen').val();
 
     if (mapSet === 'official') {
         // Для официального набора карт проверяем и главу, и карту
         if (chapter && map) {
-            const cmd = generateCommand('split-screen', { map, mapSet });
+            const { cmd, terminalCmd } = generateCommand('split-screen', { map, mapSet });
             $('#split-screen-command-text').text(cmd);
+            $('#split-screen-command-terminal-text').text(terminalCmd); // Терминальная команда
         } else {
             $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+            $('#split-screen-command-terminal-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
         }
     } else {
         // Для неофициального набора карт проверяем только карту
         if (map) {
-            const cmd = generateCommand('split-screen', { map, mapSet });
+            const { cmd, terminalCmd } = generateCommand('split-screen', { map, mapSet });
             $('#split-screen-command-text').text(cmd);
+            $('#split-screen-command-terminal-text').text(terminalCmd); // Терминальная команда
         } else {
             $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectMap);
+            $('#split-screen-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
         }
     }
 };
@@ -364,10 +372,12 @@ const updateSplitScreenCommandPreview = () => {
 const updateConnectionCommandPreview = () => {
     const ip = $('#ipInput').val().trim();
     if (ip) {
-        const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
+        const { cmd, terminalCmd } = generateCommand('connect', { ip });
         $('#connection-command-text').text(cmd);
+        $('#connection-command-terminal-text').text(terminalCmd); // Терминальная команда
     } else {
         $('#connection-command-text').text(translations[currentLanguage].pleaseEnterIP);
+        $('#connection-command-terminal-text').text(translations[currentLanguage].pleaseEnterIP);
     }
 };
 
@@ -377,45 +387,50 @@ const updateSingleMapCommandPreview = () => {
     const map = $('#mapSelectSingleMap').val();
 
     if (map) {
-        const cmd = generateCommand('single-map', { map, mapSet });
+        const { cmd, terminalCmd } = generateCommand('single-map', { map, mapSet });
         $('#single-map-command-text').text(cmd);
+        $('#single-map-command-terminal-text').text(terminalCmd); // Терминальная команда
     } else {
         $('#single-map-command-text').text(translations[currentLanguage].pleaseSelectMap);
+        $('#single-map-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
     }
 };
 
 function generateCommand(type, options = {}) {
     const baseCmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console`;
-    const getMapIdentifer = (mapSet, map) => '"' + (mapSet !== 'official' ? path.basename(mapSet) + '/' : '') + map + '"';
+    const getMapIdentifer = (mapSet, map) => (!['official', 'super8'].includes(mapSet) ? path.basename(mapSet) + '/' : '') + map;
+
+    let cmd = '';
+    let terminalCmd = '';
 
     if (type === 'single-map') {
         const { map, mapSet } = options;
         const mapIdentifer = getMapIdentifer(mapSet, map);
-        return `${baseCmd} +sv_cheats 1 +map ${mapIdentifer}`;
+        cmd = `${baseCmd} +sv_cheats 1 +map ${mapIdentifer}`;
+        terminalCmd = `changelevel ${mapIdentifer}`;
     }
 
     if (type === 'create') {
         const { map, mapSet, mp_wait_for_other_player_notconnecting_timeout, mp_wait_for_other_player_timeout } = options;
-        const mapIdentifer = getMapIdentifer(mapSet, map)
-        return `${baseCmd} +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${mp_wait_for_other_player_notconnecting_timeout} +mp_wait_for_other_player_timeout ${mp_wait_for_other_player_timeout} +map ${mapIdentifer}`;
+        const mapIdentifer = getMapIdentifer(mapSet, map);
+        cmd = `${baseCmd} +sv_cheats 1 +mp_wait_for_other_player_notconnecting_timeout ${mp_wait_for_other_player_notconnecting_timeout} +mp_wait_for_other_player_timeout ${mp_wait_for_other_player_timeout} +map ${mapIdentifer}`;
+        terminalCmd = `changelevel ${mapIdentifer}`;
     }
 
     if (type === 'connect') {
         const { ip } = options;
-        return `${baseCmd} +connect ${ip}`;
+        cmd = `${baseCmd} +connect ${ip}`;
+        terminalCmd = `connect ${ip}`;
     }
 
     if (type === 'split-screen') {
         const { map, mapSet } = options;
-        const mapIdentifer = getMapIdentifer(mapSet, map)
-        return `${baseCmd} +sv_cheats 1 +ss_map ${mapIdentifer} +bindtoggle z in_forceuser`;
+        const mapIdentifer = getMapIdentifer(mapSet, map);
+        cmd = `${baseCmd} +sv_cheats 1 +ss_map ${mapIdentifer} +bindtoggle z in_forceuser`;
+        terminalCmd = `changelevel ${mapIdentifer}`;
     }
 
-    let msg = "Что-то пошло не так при генерации команды, тип: " + type + ", опции: " + options;
-    console.error(msg);
-    toastr.error(msg);
-
-    return '';
+    return { cmd, terminalCmd }; // Возвращаем обе команды
 }
 
 // Обновляем список карт для выбранной главы
@@ -477,6 +492,16 @@ function getMapSets(mode = 'coop') {
         toastr.error('Директория с картами не найдена: ' + MAPS_DIR);
     }
 
+    // Проверяем существование карты e1912.bsp
+    const super8MapPath = path.join(PORTAL2_PATH, 'portal2', 'maps', 'e1912.bsp');
+    if (mode === 'single' && fs.existsSync(super8MapPath)) {
+        // Добавляем набор карт "Super8" с одной картой только для одиночного режима
+        mapSets.push({
+            name: 'Super8',
+            path: 'super8'
+        });
+    }
+
     return mapSets;
 }
 
@@ -521,12 +546,17 @@ function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateComman
         chapterSelect.closest('.input-group').addClass('d-none'); // Скрываем выбор главы
         mapSelect.closest('.input-group').removeClass('d-none'); // Показываем выбор карты
 
-        // Очищаем и заполняем список карт из выбранной папки
-        const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
-        maps.forEach(map => {
-            const mapName = path.basename(map, '.bsp');
-            mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
-        });
+        // Если выбран набор "Super8", добавляем только карту e1912.bsp
+        if (path.basename(selectedMapSet) === 'super8' ) {
+            mapSelect.append(`<option value="e1912">e1912</option>`);
+        } else {
+            // Очищаем и заполняем список карт из выбранной папки
+            const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
+            maps.forEach(map => {
+                const mapName = path.basename(map, '.bsp');
+                mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
+            });
+        }
     }
 
     // Обновляем предпросмотр команды
@@ -590,6 +620,9 @@ $(document).ready(() => {
         );
     });
 
+    $('#mp_wait_for_other_player_notconnecting_timeout, #mp_wait_for_other_player_timeout')
+        .on('input', updateCreateServerCommandPreview);
+
     $('#mapSelect').change(function () {
         updateCreateServerCommandPreview();
     });
@@ -597,6 +630,12 @@ $(document).ready(() => {
     $('#mapSelectSingleMap').change(function() {
         updateSingleMapCommandPreview();
     });
+
+    $('#mapSelectSplitScreen').change(function () {
+        updateSplitScreenCommandPreview();
+    })
+
+    $('#ipInput').on('input', updateConnectionCommandPreview);
 
     $('#chapterSelect').change(function() {
         updateMapListForChapter($('#mapSelect'), $(this));
@@ -632,6 +671,7 @@ $(document).ready(() => {
         $('.toggle-coop').removeClass('d-none');
         $('.server-creation').addClass('d-none');
         $('.split-screen-creation').addClass('d-none');
+        $('.connection').addClass('d-none');
     });
 
     // Обработчик кнопки "Одиночный режим"
@@ -644,6 +684,7 @@ $(document).ready(() => {
         $('.toggle-coop').removeClass('d-none');
         $('.server-creation').addClass('d-none');
         $('.split-screen-creation').addClass('d-none');
+        $('.connection').addClass('d-none');
     });
 
     // Обработчик кнопки "Кооперативный режим"
@@ -657,6 +698,7 @@ $(document).ready(() => {
         $('.toggle-coop').addClass('d-none');
         $('.server-creation').addClass('d-none');
         $('.split-screen-creation').addClass('d-none');
+        $('.connection').addClass('d-none');
     });
 
     // Обработчик кнопки "Запустить карту"
@@ -665,7 +707,8 @@ $(document).ready(() => {
         const map = $('#mapSelectSingleMap').val();
 
         if (map) {
-            const cmd = generateCommand('single-map', { map, mapSet });
+            const {cmd, terminalCmd} = generateCommand('single-map', { map, mapSet });
+            console.info('Command pre execute', cmd)
             executeCommand(cmd);
         } else {
             toastr.error(translations[currentLanguage].pleaseSelectMap);
@@ -676,10 +719,10 @@ $(document).ready(() => {
     populateMapSetSelect('#mapSetSelectSingleMap', 'single');
     $('#mapSetSelectSingleMap').change()
 
-    populateMapSetSelect('#mapSetSelectSplitScreen');
+    populateMapSetSelect('#mapSetSelectSplitScreen', 'coop');
     $('#mapSetSelectSplitScreen').change()
 
-    populateMapSetSelect('#mapSetSelect');
+    populateMapSetSelect('#mapSetSelect', 'coop');
     $('#mapSetSelect').change()
 
     // Обработчик выбора "Создать сервер"
@@ -728,7 +771,7 @@ $(document).ready(() => {
         if (mapSet === 'official') {
             // Для официального набора карт проверяем и главу, и карту
             if (chapter && map) {
-                const cmd = generateCommand('create', {
+                const {cmd, terminalCmd} = generateCommand('create', {
                     map,
                     mapSet,
                     mp_wait_for_other_player_notconnecting_timeout,
@@ -741,7 +784,7 @@ $(document).ready(() => {
         } else {
             // Для неофициального набора карт проверяем только карту
             if (map) {
-                const cmd = generateCommand('create', {
+                const {cmd, terminalCmd} = generateCommand('create', {
                     map,
                     mapSet,
                     mp_wait_for_other_player_notconnecting_timeout,
@@ -763,7 +806,7 @@ $(document).ready(() => {
         if (mapSet === 'official') {
             // Для официального набора карт проверяем и главу, и карту
             if (chapter && map) {
-                const cmd = generateCommand('split-screen', { map, mapSet });
+                const {cmd, terminalCmd} = generateCommand('split-screen', { map, mapSet });
                 executeCommand(cmd);
             } else {
                 toastr.error(translations[currentLanguage].pleaseSelectChapterAndMap);
@@ -771,7 +814,7 @@ $(document).ready(() => {
         } else {
             // Для неофициального набора карт проверяем только карту
             if (map) {
-                const cmd = generateCommand('split-screen', { map, mapSet });
+                const {cmd, terminalCmd} = generateCommand('split-screen', { map, mapSet });
                 executeCommand(cmd);
             } else {
                 toastr.error(translations[currentLanguage].pleaseSelectMap);
@@ -781,6 +824,4 @@ $(document).ready(() => {
 
     // Инициализация
     renderGameCards();
-    $('#mp_wait_for_other_player_notconnecting_timeout, #mp_wait_for_other_player_timeout').on('input', updateCreateServerCommandPreview);
-    $('#ipInput').on('input', updateConnectionCommandPreview);
 });
