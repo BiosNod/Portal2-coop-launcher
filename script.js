@@ -668,6 +668,12 @@ $(document).ready(() => {
         .val(getCookie('posterStyle') ||  'main')
         .change();
 
+    // Open all _blank links in external browser
+    $('a[target=_blank]').on('click', function(){
+        require('nw.gui').Shell.openExternal( this.href );
+        return false;
+    });
+
     // Обработчик для кнопки "Трейлер"
     $(document).on('click', '.trailer-button', function(event) {
         event.stopPropagation(); // Предотвращаем всплытие события
