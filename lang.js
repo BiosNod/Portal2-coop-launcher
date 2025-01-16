@@ -29,6 +29,7 @@ const translations = {
         selectSingleMap: "Select map for single mode",
         startSingleMap: "Launch map",
         pleaseSelectMapSet: "Select map set",
+        terminalCommand: "Change level or connect command in-game using terminal (~ key):",
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -60,5 +61,6 @@ const translations = {
         selectSingleMap: "Выбрать карту для одиночного режима",
         startSingleMap: "Запустить карту",
         pleaseSelectMapSet: "Выберите карту",
+        terminalCommand: "Команда смены карты или подключения в игре через терминал (~ тильда):",
     }
 };
