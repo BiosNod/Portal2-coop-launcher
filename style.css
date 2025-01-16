@@ -4,6 +4,7 @@ html, body {
     background-image: url(/images/background.png);
     background-position: center;
     background-size: contain;
+    height: 100%;
 }
 
 /* Game Cards */
