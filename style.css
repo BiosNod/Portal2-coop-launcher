@@ -76,9 +76,9 @@ html, body {
 /* Server Creation and Connection Interfaces */
 .server-creation, .connection, .single-map-creation {
     background: rgba(13, 17, 23, 0.95);
-    padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
+    padding: 20px 20px 4em;
 }
 
 /* Header Image */

@@ -143,6 +143,81 @@ let mods = {
 // Пример установки FullHD:
 // portal2.exe -steam -w 1920 -h 1080
 
+// Конфиги эмулятора стима (прямо в директори игры)
+const STEAM_CONFIG_PATH = path.join(PORTAL2_PATH, 'bin', 'steam_settings', 'configs.user.ini');
+
+// Функция для загрузки конфига Steam
+function loadSteamConfig() {
+    if (fs.existsSync(STEAM_CONFIG_PATH)) {
+        try {
+            const content = fs.readFileSync(STEAM_CONFIG_PATH, 'utf8');
+            const accountNameMatch = content.match(/account_name=([^\n]+)/);
+            const steamIdMatch = content.match(/account_steamid=([^\n]+)/);
+
+            if (accountNameMatch && accountNameMatch[1]) {
+                $('#accountNameInput').val(accountNameMatch[1].trim());
+                $('#accountNameInputConnect').val(accountNameMatch[1].trim());
+            }
+
+            if (steamIdMatch && steamIdMatch[1]) {
+                $('#accountSteamIDInput').val(steamIdMatch[1].trim());
+                $('#accountSteamIDInputConnect').val(steamIdMatch[1].trim());
+            }
+        } catch (err) {
+            console.error('Error reading steam config:', err);
+        }
+    }
+}
+
+// Функция для сохранения конфига Steam
+function saveSteamConfig(isServerMode = true) {
+    const accountName = isServerMode ? $('#accountNameInput').val() : $('#accountNameInputConnect').val();
+    const steamId = isServerMode ? $('#accountSteamIDInput').val() : $('#accountSteamIDInputConnect').val();
+
+    // Проверяем существование файла
+    if (!fs.existsSync(STEAM_CONFIG_PATH)) {
+        toastr.warning('Steam config file not found: ' + STEAM_CONFIG_PATH);
+        return;
+    }
+
+    try {
+        // Читаем существующий файл
+        let content = fs.readFileSync(STEAM_CONFIG_PATH, 'utf8');
+
+        // Заменяем только нужные параметры
+        if (accountName) {
+            content = content.replace(/^account_name=.*$/m, `account_name=${accountName}`);
+        }
+
+        if (steamId) {
+            content = content.replace(/^account_steamid=.*$/m, `account_steamid=${steamId}`);
+        }
+
+        // Записываем обновленный файл
+        fs.writeFileSync(STEAM_CONFIG_PATH, content);
+
+        toastr.success(translations[currentLanguage].configSaved);
+    } catch (err) {
+        console.error('Error saving steam config:', err);
+        toastr.error('Error saving steam config: ' + err.message);
+    }
+}
+
+// Генерация случайного SteamID (64-bit)
+function generateRandomSteamID() {
+    // Базовый SteamID (76561197960265728) + случайное число до 1 миллиона
+    return '7656119' + Math.floor(7960265728 + Math.random() * 1000000).toString();
+}
+
+// Генерация красивого имени аккаунта
+function generateNiceAccountName() {
+    const adjectives = ['Awesome', 'Epic', 'Legendary', 'Mighty', 'Valiant', 'Brave', 'Clever', 'Daring', 'Eager', 'Fierce'];
+    const nouns = ['Player', 'Gamer', 'PortalMaster', 'TestSubject', 'Scientist', 'Explorer', 'Adventurer', 'Hero', 'Champion', 'Winner'];
+    const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    return randomAdj + randomNoun + Math.floor(Math.random() * 100);
+}
+
 // Получение разрешения экрана
 function getScreenResolution() {
     const gui = require('nw.gui');
@@ -854,6 +929,8 @@ $(document).ready(() => {
 
     // Обработчик кнопки "Подключиться к серверу"
     $('.connect-server').click(function() {
+        saveSteamConfig(false); // Сохраняем конфиг перед подключением
+
         const ip = $('#ipInput').val().trim();
         if (ip) {
             const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
@@ -869,8 +946,35 @@ $(document).ready(() => {
         $('.coop-mode-select').removeClass('d-none'); // Показываем форму выбора кооп-режима
     });
 
+    // Загружаем конфиг Steam при запуске
+    loadSteamConfig();
+
+    // Обработчики генерации SteamID
+    $('.generate-steam-id').click(function() {
+        const newSteamID = generateRandomSteamID();
+        if ($(this).closest('.server-creation').length) {
+            $('#accountSteamIDInput').val(newSteamID);
+        } else {
+            $('#accountSteamIDInputConnect').val(newSteamID);
+        }
+        toastr.success(translations[currentLanguage].steamIdGenerated);
+    });
+
+    // Обработчики генерации имени аккаунта
+    $('.generate-account-name').click(function() {
+        const newName = generateNiceAccountName();
+        if ($(this).closest('.server-creation').length) {
+            $('#accountNameInput').val(newName);
+        } else {
+            $('#accountNameInputConnect').val(newName);
+        }
+        toastr.success(translations[currentLanguage].accountNameGenerated);
+    });
+
     // Обработчик кнопки "Запустить сервер"
     $('.start-server').click(function() {
+        saveSteamConfig(true); // Сохраняем конфиг перед запуском сервера
+
         const mapSet = $('#mapSetSelect').val();
         const chapter = $('#chapterSelect').val();
         const map = $('#mapSelect').val();

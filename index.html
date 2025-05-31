@@ -97,6 +97,11 @@
             <select class="form-select" id="mapSelectSingleMap"></select>
         </div>
 
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
+        </div>
+
         <!-- Command Preview for Single Map Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
@@ -108,11 +113,6 @@
             <div id="single-map-command-terminal-text" class="command-preview-text">
                 Пожалуйста, выберите главу и карту.
             </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="text-center">
-            <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
         </div>
     </div>
 
@@ -159,6 +159,25 @@
             <input type="text" class="form-control" id="mp_wait_for_other_player_timeout" value="100">
         </div>
 
+        <!-- Дополнительные параметры запуска -->
+        <div class="input-group mb-3">
+            <span class="input-group-text" data-translate="accountName">Account Name:</span>
+            <input type="text" class="form-control" id="accountNameInput">
+            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate">Generate</button>
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" data-translate="accountSteamID">SteamID:</span>
+            <input type="text" class="form-control" id="accountSteamIDInput">
+            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate">Generate</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
+            <button class="btn btn-success start-server" data-translate="startServer">Запустить сервер</button>
+        </div>
+
         <!-- Command Preview for Server Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
@@ -171,12 +190,6 @@
                 Пожалуйста, выберите главу и карту.
             </div>
         </div>
-
-        <!-- Action Buttons -->
-        <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success start-server" data-translate="startServer">Запустить сервер</button>
-        </div>
     </div>
 
     <!-- Server Connection Interface -->
@@ -185,6 +198,25 @@
         <div class="input-group mb-3">
             <span class="input-group-text" data-translate="ipAddress">IP-адрес сервера:</span>
             <input type="text" class="form-control" id="ipInput" placeholder="x.x.x.x">
+        </div>
+
+        <!-- Дополнительные параметры запуска -->
+        <div class="input-group mb-3">
+            <span class="input-group-text" data-translate="accountName">Account Name:</span>
+            <input type="text" class="form-control" id="accountNameInputConnect">
+            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate">Generate</button>
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" data-translate="accountSteamID">SteamID:</span>
+            <input type="text" class="form-control" id="accountSteamIDInputConnect">
+            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate">Generate</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
+            <button class="btn btn-success connect-server" data-translate="connect">Подключиться к серверу</button>
         </div>
 
         <!-- Command Preview for Connection -->
@@ -198,12 +230,6 @@
             <div id="connection-command-terminal-text" class="command-preview-text" data-translate="pleaseEnterIP">
                 Пожалуйста, введите IP-адрес сервера.
             </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success connect-server" data-translate="connect">Подключиться к серверу</button>
         </div>
     </div>
 
@@ -244,6 +270,12 @@
             Чтобы играть в режиме разделения экрана нужно иметь и клавиатуру и геймпад. После загрузки уровня нажмите Z чтобы переключить клавиатуру на длинного робота, а управление геймпадом должно остаться на коротком роботе. Если геймпад не работает, то убедитесь, что опция Контроллер (Геймпад) имеет статус "Включено" в настройках игры. Также вы можете пройти игру в этом режиме в одиночку, просто переключая управление клавиатурой между персонажами на букву Z.
         </div>
 
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
+            <button class="btn btn-success start-split-screen" data-translate="startServer">Запустить разделение экрана</button>
+        </div>
+
         <!-- Command Preview for Split Screen Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
@@ -256,12 +288,6 @@
             <div id="split-screen-command-terminal-text" class="command-preview-text">
                 Пожалуйста, выберите главу и карту.
             </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success start-split-screen" data-translate="startServer">Запустить разделение экрана</button>
         </div>
     </div>
 

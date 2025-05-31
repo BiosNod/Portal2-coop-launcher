@@ -41,6 +41,12 @@ const translations = {
         portalRevolutionPathMissing: "Path to Portal Revolution is missing in games.json.",
         play: "Play",
         trailer: "Trailer",
+        accountName: "Account Name",
+        accountSteamID: "SteamID",
+        generate: "Generate",
+        steamIdGenerated: "New SteamID generated",
+        accountNameGenerated: "New account name generated",
+        configSaved: "Steam settings saved successfully"
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -79,5 +85,11 @@ const translations = {
         portalRevolutionPathMissing: "Путь к Portal Revolution отсутствует в games.json.",
         play: "Играть",
         trailer: "Трейлер",
+        accountName: "Имя аккаунта",
+        accountSteamID: "SteamID",
+        generate: "Сгенерировать",
+        steamIdGenerated: "Новый SteamID сгенерирован",
+        accountNameGenerated: "Новое имя аккаунта сгенерировано",
+        configSaved: "Настройки Steam успешно сохранены"
     }
 };
