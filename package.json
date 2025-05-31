@@ -26,6 +26,7 @@
         "windows-x64": true
     },
     "webkit": {},
+    "chromium-args": "--proxy-server=http://127.0.0.1",
     "window": {
         "exe_icon": "icon.png",
         "frame": true,
