@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="/toastr/toastr.min.css">
 </head>
 <body scheme="client_dark">
+
     <!-- Video Modal -->
     <div id="videoModal" class="video-modal">
         <div class="video-modal-content">
-            <span id="closeVideoModal" class="close-video-modal">&times;</span>
+            <span id="closeVideoModal" class="close-video-modal"><i class="bi bi-x-lg"></i></span>
             <video id="trailerVideo" controls autoplay>
                 <source src="" type="video/mp4">
                 Your browser does not support the video tag.
@@ -28,29 +29,29 @@
         <!-- Controls -->
         <div class="controls">
             <select class="form-select poster-style" style="width: auto">
-                <option value="main" data-translate="iconSet1">Набор иконок 1</option>
-                <option value="alt" data-translate="iconSet2">Набор иконок 2</option>
+                <option value="main" data-translate="iconSet1"><i class="bi bi-palette"></i> Набор иконок 1</option>
+                <option value="alt" data-translate="iconSet2"><i class="bi bi-palette"></i> Набор иконок 2</option>
             </select>
             <select class="form-select language-select" style="width: auto">
-                <option value="en" data-translate="english">English</option>
-                <option value="ru" data-translate="russian">Русский</option>
+                <option value="en" data-translate="english"><i class="bi bi-flag"></i> English</option>
+                <option value="ru" data-translate="russian"><i class="bi bi-flag"></i> Русский</option>
             </select>
             <!-- Добавляем две отдельные кнопки -->
-            <button class="btn btn-dark toggle-coop" data-translate="coopMode">Кооперативный режим</button>
-            <button class="btn btn-dark toggle-single-map" data-translate="singleMapMode">Дополнительные одиночные карты</button>
+            <button class="btn btn-dark toggle-coop" data-translate="coopMode"><i class="bi bi-people-fill"></i> Кооперативный режим</button>
+            <button class="btn btn-dark toggle-single-map" data-translate="singleMapMode"><i class="bi bi-map"></i> Дополнительные одиночные карты</button>
             <!-- Добавляем кнопку "Одиночный режим" -->
-            <button class="btn btn-dark toggle-single-mode d-none" data-translate="singleMode">Одиночный режим</button>
+            <button class="btn btn-dark toggle-single-mode d-none" data-translate="singleMode"><i class="bi bi-person-fill"></i> Одиночный режим</button>
 
             <a href="https://github.com/BiosNod/Portal2-coop-launcher" target="_blank" class="source-code">
-                <button class="btn btn-dark">Source code (GithHub)</button>
+                <button class="btn btn-dark"><i class="bi bi-github"></i> Source code (GithHub)</button>
             </a>
 
             <a href="https://rutracker.org/forum/profile.php?mode=viewprofile&u=38512892" target="_blank" class="source-code btn-biosnod">
-                <button class="btn btn-dark">Launcher code: BiosNod</button>
+                <button class="btn btn-dark"><i class="bi bi-code-slash"></i> Launcher code: BiosNod</button>
             </a>
 
             <a href="https://rutracker.org/forum/profile.php?mode=viewprofile&u=7993128" target="_blank" class="source-code btn-dixen18">
-                <button class="btn btn-dark">Game repack: Dixen18</button>
+                <button class="btn btn-dark"><i class="bi bi-archive"></i> Game repack: Dixen18</button>
             </a>
         </div>
     </div>
@@ -85,22 +86,22 @@
     <div class="single-map-creation d-none">
         <!-- Добавляем выбор набора карт -->
         <div class="input-group mb-3">
-            <label class="input-group-text" for="mapSetSelectSingleMap" data-translate="selectMapSet">Набор карт</label>
+            <label class="input-group-text" for="mapSetSelectSingleMap" data-translate="selectMapSet"><i class="bi bi-collection"></i> Набор карт</label>
             <select class="form-select" id="mapSetSelectSingleMap">
-                <option value="" selected data-translate="pleaseSelectMapSet">Выберите набор карт</option> <!-- Используем перевод -->
+                <option value="" selected data-translate="pleaseSelectMapSet"><i class="bi bi-collection"></i> Выберите набор карт</option> <!-- Используем перевод -->
                 <!-- Динамически добавляем папки с картами -->
             </select>
         </div>
 
         <!-- Блок с выбором карты -->
         <div class="input-group mb-3">
-            <label class="input-group-text" for="mapSelectSingleMap" data-translate="selectMap">Выбор карты</label>
+            <label class="input-group-text" for="mapSelectSingleMap" data-translate="selectMap"><i class="bi bi-map"></i> Выбор карты</label>
             <select class="form-select" id="mapSelectSingleMap"></select>
         </div>
 
         <!-- Action Buttons -->
         <div class="text-center">
-            <button class="btn btn-success start-single-map" data-translate="startSingleMap">Запустить карту</button>
+            <button class="btn btn-success start-single-map" data-translate="startSingleMap"><i class="bi bi-play-fill"></i> Запустить карту</button>
         </div>
 
         <!-- Command Preview for Single Map Creation -->
@@ -131,9 +132,9 @@
     <div class="server-creation d-none">
         <!-- Добавляем в server-creation и split-screen-creation -->
         <div class="input-group mb-3">
-            <label class="input-group-text" for="mapSetSelect" data-translate="selectMapSet">Набор карт</label>
+            <label class="input-group-text" for="mapSetSelect" data-translate="selectMapSet"><i class="bi bi-collection"></i> Набор карт</label>
             <select class="form-select" id="mapSetSelect">
-                <option value="official" selected>Portal 2 Official Coop</option>
+                <option value="official" selected><i class="bi bi-building"></i> Portal 2 Official Coop</option>
                 <!-- Динамически добавляем папки с картами -->
             </select>
         </div>
@@ -141,52 +142,52 @@
         <!-- Chapter and Map Selections -->
         <!-- Блок с выбором главы -->
         <div class="input-group mb-3 chapter-select">
-            <label class="input-group-text" for="chapterSelect" data-translate="selectChapter">Выбор главы</label>
+            <label class="input-group-text" for="chapterSelect" data-translate="selectChapter"><i class="bi bi-book"></i> Выбор главы</label>
             <select class="form-select" id="chapterSelect"></select>
         </div>
 
         <!-- Блок с выбором карты -->
         <div class="input-group mb-3 map-select">
-            <label class="input-group-text" for="mapSelect" data-translate="selectMap">Выбор карты</label>
+            <label class="input-group-text" for="mapSelect" data-translate="selectMap"><i class="bi bi-map"></i> Выбор карты</label>
             <select class="form-select" id="mapSelect"></select>
         </div>
 
         <!-- Port Input -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="serverPort">Порт сервера:</span>
+            <span class="input-group-text" data-translate="serverPort"><i class="bi bi-hdd-network"></i> Порт сервера:</span>
             <input readonly type="text" value="27015" class="form-control">
-            <span class="input-group-text" data-translate="portNote">Изменить нельзя, у сервера должен быть открыт этот порт</span>
+            <span class="input-group-text" data-translate="portNote"><i class="bi bi-info-circle"></i> Изменить нельзя, у сервера должен быть открыт этот порт</span>
         </div>
 
         <!-- Timeout Input 1 -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="mp_wait_for_other_player_notconnecting_timeout">Maximum time that we wait in the transition loading screen after we fully loaded for partner to start loading</span>
+            <span class="input-group-text" data-translate="mp_wait_for_other_player_notconnecting_timeout"><i class="bi bi-clock"></i> Maximum time that we wait in the transition loading screen after we fully loaded for partner to start loading</span>
             <input type="text" class="form-control" id="mp_wait_for_other_player_notconnecting_timeout" value="60">
         </div>
 
         <!-- Timeout Input 2 -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="mp_wait_for_other_player_timeout">Maximum time that we wait in the transition loading screen for the other player</span>
+            <span class="input-group-text" data-translate="mp_wait_for_other_player_timeout"><i class="bi bi-clock"></i> Maximum time that we wait in the transition loading screen for the other player</span>
             <input type="text" class="form-control" id="mp_wait_for_other_player_timeout" value="100">
         </div>
 
         <!-- Дополнительные параметры запуска -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="accountName">Account Name:</span>
+            <span class="input-group-text" data-translate="accountName"><i class="bi bi-person"></i> Account Name:</span>
             <input type="text" class="form-control" id="accountNameInput">
-            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate">Generate</button>
+            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate"><i class="bi bi-dice-6"></i> Generate</button>
         </div>
 
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="accountSteamID">SteamID:</span>
+            <span class="input-group-text" data-translate="accountSteamID"><i class="bi bi-person-badge"></i> SteamID:</span>
             <input type="text" class="form-control" id="accountSteamIDInput">
-            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate">Generate</button>
+            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate"><i class="bi bi-dice-6"></i> Generate</button>
         </div>
 
         <!-- Action Buttons -->
         <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success start-server" data-translate="startServer">Запустить сервер</button>
+            <button class="btn btn-secondary back-btn" data-translate="back"><i class="bi bi-arrow-left"></i> Назад</button>
+            <button class="btn btn-success start-server" data-translate="startServer"><i class="bi bi-server"></i> Запустить сервер</button>
         </div>
 
         <!-- Command Preview for Server Creation -->
@@ -217,27 +218,27 @@
     <div class="connection d-none">
         <!-- IP Input -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="ipAddress">IP-адрес сервера:</span>
+            <span class="input-group-text" data-translate="ipAddress"><i class="bi bi-globe"></i> IP-адрес сервера:</span>
             <input type="text" class="form-control" id="ipInput" placeholder="x.x.x.x">
         </div>
 
         <!-- Дополнительные параметры запуска -->
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="accountName">Account Name:</span>
+            <span class="input-group-text" data-translate="accountName"><i class="bi bi-person"></i> Account Name:</span>
             <input type="text" class="form-control" id="accountNameInputConnect">
-            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate">Generate</button>
+            <button class="btn btn-outline-secondary generate-account-name" type="button" data-translate="generate"><i class="bi bi-dice-6"></i> Generate</button>
         </div>
 
         <div class="input-group mb-3">
-            <span class="input-group-text" data-translate="accountSteamID">SteamID:</span>
+            <span class="input-group-text" data-translate="accountSteamID"><i class="bi bi-person-badge"></i> SteamID:</span>
             <input type="text" class="form-control" id="accountSteamIDInputConnect">
-            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate">Generate</button>
+            <button class="btn btn-outline-secondary generate-steam-id" type="button" data-translate="generate"><i class="bi bi-dice-6"></i> Generate</button>
         </div>
 
         <!-- Action Buttons -->
         <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success connect-server" data-translate="connect">Подключиться к серверу</button>
+            <button class="btn btn-secondary back-btn" data-translate="back"><i class="bi bi-arrow-left"></i> Назад</button>
+            <button class="btn btn-success connect-server" data-translate="connect"><i class="bi bi-wifi"></i> Подключиться к серверу</button>
         </div>
 
         <!-- Command Preview for Connection -->
@@ -279,32 +280,32 @@
     <div class="split-screen-creation d-none">
         <!-- Добавляем выбор набора карт -->
         <div class="input-group mb-3">
-            <label class="input-group-text" for="mapSetSelectSplitScreen" data-translate="selectMapSet">Набор карт</label>
+            <label class="input-group-text" for="mapSetSelectSplitScreen" data-translate="selectMapSet"><i class="bi bi-collection"></i> Набор карт</label>
             <select class="form-select" id="mapSetSelectSplitScreen">
-                <option value="official" selected>Portal 2 Official Coop</option>
+                <option value="official" selected><i class="bi bi-building"></i> Portal 2 Official Coop</option>
                 <!-- Динамически добавляем папки с картами -->
             </select>
         </div>
 
         <!-- Chapter and Map Selections -->
         <div class="input-group mb-3">
-            <label class="input-group-text" for="chapterSelect" data-translate="selectChapter">Выбор главы</label>
+            <label class="input-group-text" for="chapterSelect" data-translate="selectChapter"><i class="bi bi-book"></i> Выбор главы</label>
             <select class="form-select" id="chapterSelectSplitScreen"></select>
         </div>
         <div class="input-group mb-3">
-            <label class="input-group-text" for="mapSelect" data-translate="selectMap">Выбор карты</label>
+            <label class="input-group-text" for="mapSelect" data-translate="selectMap"><i class="bi bi-map"></i> Выбор карты</label>
             <select class="form-select" id="mapSelectSplitScreen"></select>
         </div>
 
         <!-- Info Message -->
         <div class="alert alert-warning" role="alert" data-translate="splitScreenInfo">
-            Чтобы играть в режиме разделения экрана нужно иметь и клавиатуру и геймпад. После загрузки уровня нажмите Z чтобы переключить клавиатуру на длинного робота, а управление геймпадом должно остаться на коротком роботе. Если геймпад не работает, то убедитесь, что опция Контроллер (Геймпад) имеет статус "Включено" в настройках игры. Также вы можете пройти игру в этом режиме в одиночку, просто переключая управление клавиатурой между персонажами на букву Z.
+            <i class="bi bi-info-circle-fill"></i> Чтобы играть в режиме разделения экрана нужно иметь и клавиатуру и геймпад. После загрузки уровня нажмите Z чтобы переключить клавиатуру на длинного робота, а управление геймпадом должно остаться на коротком роботе. Если геймпад не работает, то убедитесь, что опция Контроллер (Геймпад) имеет статус "Включено" в настройках игры. Также вы можете пройти игру в этом режиме в одиночку, просто переключая управление клавиатурой между персонажами на букву Z.
         </div>
 
         <!-- Action Buttons -->
         <div class="text-center">
-            <button class="btn btn-secondary back-btn" data-translate="back">Назад</button>
-            <button class="btn btn-success start-split-screen" data-translate="startServer">Запустить разделение экрана</button>
+            <button class="btn btn-secondary back-btn" data-translate="back"><i class="bi bi-arrow-left"></i> Назад</button>
+            <button class="btn btn-success start-split-screen" data-translate="startServer"><i class="bi bi-aspect-ratio"></i> Запустить разделение экрана</button>
         </div>
 
         <!-- Command Preview for Split Screen Creation -->

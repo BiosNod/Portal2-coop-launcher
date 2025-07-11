@@ -139,6 +139,16 @@ html, body {
     margin-top: 2px;
 }
 
+/* Icon spacing in buttons and labels */
+.btn i, .input-group-text i {
+    margin-right: 0.5rem;
+}
+
+/* Icon spacing in select options */
+.form-select option {
+    padding-left: 0.5rem;
+}
+
 /* Split Screen Mode Selection */
 .split-screen-mode {
     display: flex;

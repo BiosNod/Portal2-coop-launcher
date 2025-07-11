@@ -442,7 +442,26 @@ function translateUI(lang) {
     // Обновляем текст интерфейса
     $('[data-translate]').each(function() {
         const key = $(this).data('translate');
-        $(this).text(translations[lang][key]);
+        const $element = $(this);
+        
+        // Сохраняем HTML (иконки) если они есть
+        const htmlContent = $element.html();
+        const hasIcons = htmlContent.includes('<i class="bi');
+        
+        if (hasIcons) {
+            // Если есть иконки, сохраняем их и добавляем перевод после
+            const iconMatch = htmlContent.match(/<i[^>]*class="[^"]*bi[^"]*"[^>]*><\/i>/);
+            if (iconMatch) {
+                const icon = iconMatch[0];
+                $element.html(icon + ' ' + translations[lang][key]);
+            } else {
+                // Если не удалось найти иконку, просто заменяем текст
+                $element.text(translations[lang][key]);
+            }
+        } else {
+            // Если нет иконок, просто заменяем текст
+            $element.text(translations[lang][key]);
+        }
     });
 }
 
@@ -467,8 +486,8 @@ const renderGameCards = (posterStyle = 'main') => {
         const card = $(`
             <div class="game-card" style="background-image: url(/images/launcher/${posterStyle}/${mod.image})" alt="${key}">
                 <div class="game-card-overlay">
-                    <button class="play-button" data-translate="play">Играть</button>
-                    <button class="trailer-button" data-video="${trailers[key]}" data-translate="trailer">Трейлер</button>
+                    <button class="play-button" data-translate="play"><i class="bi bi-play-circle-fill"></i> Играть</button>
+                    <button class="trailer-button" data-video="${trailers[key]}" data-translate="trailer"><i class="bi bi-camera-video-fill"></i> Трейлер</button>
                 </div>
             </div>
         `);
@@ -678,7 +697,7 @@ function updateMapListForChapter(mapSelect, chapterSelect) {
 
                 const translatedMap = getTranslatedMap(namePart, currentLanguage);
                 // Добавляем карту с переведённым названием и идентификатором
-                mapSelect.append(`<option value="${mapIdentifier}" data-translate="${map}">${translatedMap}</option>`);
+                mapSelect.append(`<option value="${mapIdentifier}" data-translate="${map}"><i class="bi bi-controller"></i> ${translatedMap}</option>`);
             }
         });
     }
@@ -736,7 +755,8 @@ function populateMapSetSelect(selectorId, mode = 'coop') {
 
     // Добавляем кастомные карты
     getMapSets(mode).forEach(mapSet => {
-        mapSetSelect.append(`<option value="${mapSet.path}">${mapSet.name}</option>`);
+        const icon = mode === 'single' ? 'bi-map' : 'bi-building';
+        mapSetSelect.append(`<option value="${mapSet.path}"><i class="${icon}"></i> ${mapSet.name}</option>`);
     });
 }
 
@@ -760,7 +780,7 @@ function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateComman
                         translations[lang][chapter] = getTranslatedChapter(chapter, lang);
 
                 const translatedChapter = getTranslatedChapter(chapter, currentLanguage)
-                chapterSelect.append(`<option value="${chapter}" data-translate="${chapter}">${translatedChapter}</option>`);
+                chapterSelect.append(`<option value="${chapter}" data-translate="${chapter}"><i class="bi bi-book"></i> ${translatedChapter}</option>`);
             }
         });
 
@@ -772,13 +792,13 @@ function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateComman
 
         // Если выбран набор "Super8", добавляем только карту e1912.bsp
         if (path.basename(selectedMapSet) === 'super8' ) {
-            mapSelect.append(`<option value="e1912">e1912</option>`);
+            mapSelect.append(`<option value="e1912"><i class="bi bi-controller"></i> e1912</option>`);
         } else {
             // Очищаем и заполняем список карт из выбранной папки
             const maps = fs.readdirSync(selectedMapSet).filter(file => file.endsWith('.bsp'));
             maps.forEach(map => {
                 const mapName = path.basename(map, '.bsp');
-                mapSelect.append(`<option value="${mapName}">${mapName}</option>`);
+                mapSelect.append(`<option value="${mapName}"><i class="bi bi-controller"></i> ${mapName}</option>`);
             });
         }
     }
