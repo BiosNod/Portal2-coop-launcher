@@ -50,7 +50,9 @@ const translations = {
         configSaved: "Steam settings saved successfully",
         copiedToClipboard: "Copied to clipboard",
         copyFailed: "Copy failed",
-        noCommandToCopy: "No command to copy"
+        noCommandToCopy: "No command to copy",
+        resetToDefault: "Reset to default value",
+        clear: "Clear"
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -98,6 +100,8 @@ const translations = {
         configSaved: "Настройки Steam успешно сохранены",
         copiedToClipboard: "Скопировано в буфер обмена",
         copyFailed: "Ошибка копирования",
-        noCommandToCopy: "Нет команды для копирования"
+        noCommandToCopy: "Нет команды для копирования",
+        resetToDefault: "Сбросить",
+        clear: "Очистить"
     }
 };

@@ -162,13 +162,19 @@
         <!-- Timeout Input 1 -->
         <div class="input-group mb-3">
             <span class="input-group-text" data-translate="mp_wait_for_other_player_notconnecting_timeout"><i class="bi bi-clock"></i> Maximum time that we wait in the transition loading screen after we fully loaded for partner to start loading</span>
-            <input type="text" class="form-control" id="mp_wait_for_other_player_notconnecting_timeout" value="60">
+            <input type="number" class="form-control" id="mp_wait_for_other_player_notconnecting_timeout" value="60" min="1" max="9999">
+            <button class="btn btn-outline-secondary reset-timeout-btn" type="button" data-target="mp_wait_for_other_player_notconnecting_timeout" data-default="60" data-translate="resetToDefault" title="Сбросить">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
         </div>
 
         <!-- Timeout Input 2 -->
         <div class="input-group mb-3">
             <span class="input-group-text" data-translate="mp_wait_for_other_player_timeout"><i class="bi bi-clock"></i> Maximum time that we wait in the transition loading screen for the other player</span>
-            <input type="text" class="form-control" id="mp_wait_for_other_player_timeout" value="100">
+            <input type="number" class="form-control" id="mp_wait_for_other_player_timeout" value="100" min="1" max="9999">
+            <button class="btn btn-outline-secondary reset-timeout-btn" type="button" data-target="mp_wait_for_other_player_timeout" data-default="100" data-translate="resetToDefault" title="Сбросить">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
         </div>
 
         <!-- Дополнительные параметры запуска -->
@@ -220,6 +226,9 @@
         <div class="input-group mb-3">
             <span class="input-group-text" data-translate="ipAddress"><i class="bi bi-globe"></i> IP-адрес сервера:</span>
             <input type="text" class="form-control" id="ipInput" placeholder="x.x.x.x">
+            <button class="btn btn-outline-secondary reset-ip-btn" type="button" data-translate="clear" title="Очистить">
+                <i class="bi bi-x-circle"></i>
+            </button>
         </div>
 
         <!-- Дополнительные параметры запуска -->

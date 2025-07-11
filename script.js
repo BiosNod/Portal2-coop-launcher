@@ -437,6 +437,7 @@ const executeCommand = (cmd) => {
 };
 
 let currentLanguage = 'en'; // По умолчанию русский язык
+let isInitializing = false; // Флаг для блокировки сохранения во время инициализации
 
 function translateUI(lang) {
     // Обновляем текст интерфейса
@@ -760,7 +761,7 @@ function populateMapSetSelect(selectorId, mode = 'coop') {
     });
 }
 
-function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateCommandPreview, mode = 'coop') {
+function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateCommandPreview, mode = 'coop', skipChapterChange = false) {
     const selectedMapSet = mapSetSelect.val();
     // Сбрасываем выпадающий список карт
     mapSelect.empty();
@@ -784,7 +785,9 @@ function handleMapSetChange(mapSetSelect, mapSelect, chapterSelect, updateComman
             }
         });
 
-        chapterSelect.change();
+        if (!skipChapterChange) {
+            chapterSelect.change();
+        }
     } else if (selectedMapSet) {
         // Если выбран кастомный набор карт, скрываем выбор глав и показываем только карты
         chapterSelect.closest('.input-group').addClass('d-none'); // Скрываем выбор главы
@@ -832,7 +835,113 @@ function renameFoldersWithSpaces(directory) {
     });
 }
 
+// Функция для сохранения всех настроек в куки
+function saveAllSettings() {
+    // Не сохраняем во время инициализации
+    if (isInitializing) {
+        console.log('Skipping save during initialization');
+        return;
+    }
+
+    // Сохраняем настройки создания сервера
+    const mapSetSelectVal = $('#mapSetSelect').val();
+    const chapterSelectVal = $('#chapterSelect').val();
+    const mapSelectVal = $('#mapSelect').val();
+    
+    console.log('Saving values:', {
+        mapSetSelect: mapSetSelectVal,
+        chapterSelect: chapterSelectVal,
+        mapSelect: mapSelectVal
+    });
+    
+    setCookie('mapSetSelect', mapSetSelectVal, 365);
+    setCookie('chapterSelect', chapterSelectVal, 365);
+    setCookie('mapSelect', mapSelectVal, 365);
+    setCookie('mp_wait_for_other_player_notconnecting_timeout', $('#mp_wait_for_other_player_notconnecting_timeout').val(), 365);
+    setCookie('mp_wait_for_other_player_timeout', $('#mp_wait_for_other_player_timeout').val(), 365);
+
+    // Сохраняем настройки подключения к серверу
+    setCookie('ipInput', $('#ipInput').val(), 365);
+
+    // Сохраняем настройки одиночной карты
+    setCookie('mapSetSelectSingleMap', $('#mapSetSelectSingleMap').val(), 365);
+    setCookie('mapSelectSingleMap', $('#mapSelectSingleMap').val(), 365);
+
+    // Сохраняем настройки разделения экрана
+    setCookie('mapSetSelectSplitScreen', $('#mapSetSelectSplitScreen').val(), 365);
+    setCookie('chapterSelectSplitScreen', $('#chapterSelectSplitScreen').val(), 365);
+    setCookie('mapSelectSplitScreen', $('#mapSelectSplitScreen').val(), 365);
+
+    // Отладочная информация
+    console.log('Settings saved to cookies:', {
+        mapSetSelect: $('#mapSetSelect').val(),
+        mapSelect: $('#mapSelect').val(),
+        chapterSelect: $('#chapterSelect').val(),
+        mp_wait_for_other_player_notconnecting_timeout: $('#mp_wait_for_other_player_notconnecting_timeout').val(),
+        mp_wait_for_other_player_timeout: $('#mp_wait_for_other_player_timeout').val(),
+        ipInput: $('#ipInput').val()
+    });
+}
+
+// Функция для восстановления всех настроек из куки
+function restoreAllSettings() {
+    // Восстанавливаем настройки создания сервера
+    if (getCookie('mapSetSelect')) {
+        $('#mapSetSelect').val(getCookie('mapSetSelect'));
+    }
+    
+    // Восстанавливаем таймауты
+    const savedNotConnectingTimeout = getCookie('mp_wait_for_other_player_notconnecting_timeout');
+    if (savedNotConnectingTimeout) {
+        $('#mp_wait_for_other_player_notconnecting_timeout').val(savedNotConnectingTimeout);
+    }
+    
+    const savedTimeout = getCookie('mp_wait_for_other_player_timeout');
+    if (savedTimeout) {
+        $('#mp_wait_for_other_player_timeout').val(savedTimeout);
+    }
+
+    // Восстанавливаем настройки подключения к серверу
+    if (getCookie('ipInput')) {
+        $('#ipInput').val(getCookie('ipInput'));
+    }
+
+    // Восстанавливаем настройки одиночной карты
+    if (getCookie('mapSetSelectSingleMap')) {
+        $('#mapSetSelectSingleMap').val(getCookie('mapSetSelectSingleMap'));
+    }
+
+    // Восстанавливаем настройки разделения экрана
+    if (getCookie('mapSetSelectSplitScreen')) {
+        $('#mapSetSelectSplitScreen').val(getCookie('mapSetSelectSplitScreen'));
+    }
+
+    // Отладочная информация
+    console.log('Settings restored from cookies:', {
+        mapSetSelect: getCookie('mapSetSelect'),
+        mapSelect: getCookie('mapSelect'),
+        chapterSelect: getCookie('chapterSelect'),
+        mp_wait_for_other_player_notconnecting_timeout: savedNotConnectingTimeout,
+        mp_wait_for_other_player_timeout: savedTimeout,
+        ipInput: getCookie('ipInput')
+    });
+}
+
+// Функция для восстановления карт после загрузки наборов карт
+function restoreMapSelections() {
+    console.log('Restoring map selections...');
+    
+    // Восстанавливаем выбор карты для одиночной карты (для неё нет глав)
+    if (getCookie('mapSelectSingleMap')) {
+        $('#mapSelectSingleMap').val(getCookie('mapSelectSingleMap'));
+    }
+}
+
 $(document).ready(() => {
+    // Устанавливаем флаг инициализации в самом начале
+    isInitializing = true;
+    console.log('Starting initialization, saving disabled');
+    
     // Определяем язык по умолчанию
     currentLanguage = getCookie('language') || getSystemLanguage();
 
@@ -842,6 +951,11 @@ $(document).ready(() => {
             const selectedPosterStyle = $(this).val();
             renderGameCards(selectedPosterStyle);
             setCookie('posterStyle', selectedPosterStyle, 365); // Сохраняем на год
+            
+            // Сохраняем настройки при изменении набора иконок (только если не инициализация)
+            if (!isInitializing) {
+                saveAllSettings();
+            }
         })
         .val(getCookie('posterStyle') ||  'main')
         .change();
@@ -884,6 +998,7 @@ $(document).ready(() => {
             updateCreateServerCommandPreview,
             'coop'
         );
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     $('#mapSetSelectSingleMap').change(function() {
@@ -894,6 +1009,7 @@ $(document).ready(() => {
             updateSingleMapCommandPreview,
             'single'
         );
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     // Обработчик для разделения экрана
@@ -905,33 +1021,45 @@ $(document).ready(() => {
             updateSplitScreenCommandPreview,
             'coop'
         );
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     $('#mp_wait_for_other_player_notconnecting_timeout, #mp_wait_for_other_player_timeout')
-        .on('input', updateCreateServerCommandPreview);
+        .on('input', function() {
+            updateCreateServerCommandPreview();
+            saveAllSettings(); // Сохраняем настройки при изменении
+        });
 
     $('#mapSelect').change(function () {
         updateCreateServerCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     $('#mapSelectSingleMap').change(function() {
         updateSingleMapCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     $('#mapSelectSplitScreen').change(function () {
         updateSplitScreenCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
     })
 
-    $('#ipInput').on('input', updateConnectionCommandPreview);
+    $('#ipInput').on('input', function() {
+        updateConnectionCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
+    });
 
     $('#chapterSelect').change(function() {
         updateMapListForChapter($('#mapSelect'), $(this));
         updateCreateServerCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     $('#chapterSelectSplitScreen').change(function() {
         updateMapListForChapter($('#mapSelectSplitScreen'), $(this));
         updateSplitScreenCommandPreview();
+        saveAllSettings(); // Сохраняем настройки при изменении
     });
 
     // Инициализация перевода
@@ -943,6 +1071,11 @@ $(document).ready(() => {
             currentLanguage = $(this).val();
             translateUI(currentLanguage);
             setCookie('language', currentLanguage, 365); // Сохраняем на год
+            
+            // Сохраняем настройки при изменении языка (только если не инициализация)
+            if (!isInitializing) {
+                saveAllSettings();
+            }
         })
         .val(currentLanguage)
         .change();
@@ -1004,13 +1137,125 @@ $(document).ready(() => {
 
     // Обновляем выпадающий список наборов карт для одиночного режима
     populateMapSetSelect('#mapSetSelectSingleMap', 'single');
-    $('#mapSetSelectSingleMap').change()
-
     populateMapSetSelect('#mapSetSelectSplitScreen', 'coop');
-    $('#mapSetSelectSplitScreen').change()
-
     populateMapSetSelect('#mapSetSelect', 'coop');
-    $('#mapSetSelect').change()
+
+    // Восстанавливаем выбор карт после загрузки всех списков
+    setTimeout(() => {
+        // Завершаем инициализацию и разрешаем сохранение
+        isInitializing = false;
+        console.log('Initialization completed, saving enabled');
+        
+        // Восстанавливаем настройки из куки (после завершения инициализации)
+        restoreAllSettings();
+        
+        // Сохраняем значения карт и глав перед загрузкой новых списков
+        const savedMapSelect = getCookie('mapSelect');
+        const savedMapSelectSingleMap = getCookie('mapSelectSingleMap');
+        const savedMapSelectSplitScreen = getCookie('mapSelectSplitScreen');
+        const savedChapterSelect = getCookie('chapterSelect');
+        const savedChapterSelectSplitScreen = getCookie('chapterSelectSplitScreen');
+        
+        // Запускаем обработчики изменений для загрузки связанных карт
+        // Это нужно делать только если есть сохраненные значения наборов карт
+        if (getCookie('mapSetSelect')) {
+            // Для официального набора карт сначала загружаем главы, потом восстанавливаем
+            if (getCookie('mapSetSelect') === 'official') {
+                // Загружаем главы без выбора первой по умолчанию
+                handleMapSetChange(
+                    $('#mapSetSelect'),
+                    $('#mapSelect'),
+                    $('#chapterSelect'),
+                    updateCreateServerCommandPreview,
+                    'coop',
+                    true // Пропускаем автоматический выбор первой главы
+                );
+                
+                // Восстанавливаем главу, если она была сохранена
+                if (savedChapterSelect) {
+                    $('#chapterSelect').val(savedChapterSelect);
+                    updateMapListForChapter($('#mapSelect'), $('#chapterSelect'));
+                    console.log('Restored chapterSelect for official maps:', savedChapterSelect);
+                }
+                
+                // Восстанавливаем карту после загрузки карт для главы
+                if (savedMapSelect && $('#mapSelect option[value="' + savedMapSelect + '"]').length > 0) {
+                    $('#mapSelect').val(savedMapSelect);
+                    console.log('Restored mapSelect for official maps:', savedMapSelect);
+                }
+            } else {
+                // Для кастомных наборов карт просто загружаем и восстанавливаем карту
+                handleMapSetChange(
+                    $('#mapSetSelect'),
+                    $('#mapSelect'),
+                    $('#chapterSelect'),
+                    updateCreateServerCommandPreview,
+                    'coop'
+                );
+                
+                if (savedMapSelect && $('#mapSelect option[value="' + savedMapSelect + '"]').length > 0) {
+                    $('#mapSelect').val(savedMapSelect);
+                    console.log('Restored mapSelect for custom maps:', savedMapSelect);
+                }
+            }
+        }
+
+        if (getCookie('mapSetSelectSingleMap')) {
+            handleMapSetChange(
+                $('#mapSetSelectSingleMap'),
+                $('#mapSelectSingleMap'),
+                $('#chapterSelectSingleMap'),
+                updateSingleMapCommandPreview,
+                'single'
+            );
+            // Восстанавливаем сохраненное значение карты сразу после загрузки списка
+            if (savedMapSelectSingleMap && $('#mapSelectSingleMap option[value="' + savedMapSelectSingleMap + '"]').length > 0) {
+                $('#mapSelectSingleMap').val(savedMapSelectSingleMap);
+            }
+        }
+
+        if (getCookie('mapSetSelectSplitScreen')) {
+            handleMapSetChange(
+                $('#mapSetSelectSplitScreen'),
+                $('#mapSelectSplitScreen'),
+                $('#chapterSelectSplitScreen'),
+                updateSplitScreenCommandPreview,
+                'coop',
+                true // Пропускаем автоматический выбор первой главы
+            );
+            
+            // Для официального набора карт нужно восстановить главу и карту
+            if (getCookie('mapSetSelectSplitScreen') === 'official') {
+                // Восстанавливаем главу, если она была сохранена
+                if (savedChapterSelectSplitScreen) {
+                    $('#chapterSelectSplitScreen').val(savedChapterSelectSplitScreen);
+                    updateMapListForChapter($('#mapSelectSplitScreen'), $('#chapterSelectSplitScreen'));
+                    console.log('Restored chapterSelectSplitScreen for official maps:', savedChapterSelectSplitScreen);
+                }
+                
+                // Восстанавливаем карту после загрузки карт для главы
+                if (savedMapSelectSplitScreen && $('#mapSelectSplitScreen option[value="' + savedMapSelectSplitScreen + '"]').length > 0) {
+                    $('#mapSelectSplitScreen').val(savedMapSelectSplitScreen);
+                    console.log('Restored mapSelectSplitScreen for official maps:', savedMapSelectSplitScreen);
+                }
+            } else {
+                // Для кастомных наборов карт просто восстанавливаем карту
+                if (savedMapSelectSplitScreen && $('#mapSelectSplitScreen option[value="' + savedMapSelectSplitScreen + '"]').length > 0) {
+                    $('#mapSelectSplitScreen').val(savedMapSelectSplitScreen);
+                    console.log('Restored mapSelectSplitScreen for custom maps:', savedMapSelectSplitScreen);
+                }
+            }
+        }
+        
+        // Восстанавливаем выбор карт после загрузки всех списков
+        restoreMapSelections();
+        
+        // Обновляем предпросмотры команд
+        updateCreateServerCommandPreview();
+        updateSingleMapCommandPreview();
+        updateSplitScreenCommandPreview();
+        updateConnectionCommandPreview();
+    }, 200); // Увеличиваем задержку для гарантии загрузки списков
 
     // Обработчик выбора "Создать сервер"
     $('#createServerCard').click(function() {
@@ -1072,6 +1317,34 @@ $(document).ready(() => {
             $('#accountNameInputConnect').val(newName);
         }
         toastr.success(translations[currentLanguage].accountNameGenerated);
+    });
+
+    // Обработчики кнопок сброса таймаутов
+    $('.reset-timeout-btn').click(function() {
+        const targetId = $(this).data('target');
+        const defaultValue = $(this).data('default');
+        $(`#${targetId}`).val(defaultValue);
+        updateCreateServerCommandPreview();
+        
+        // Сохраняем настройки при сбросе (только если не инициализация)
+        if (!isInitializing) {
+            saveAllSettings();
+        }
+        
+        toastr.success(translations[currentLanguage].resetToDefault);
+    });
+
+    // Обработчик кнопки очистки IP
+    $('.reset-ip-btn').click(function() {
+        $('#ipInput').val('');
+        updateConnectionCommandPreview();
+        
+        // Сохраняем настройки при очистке (только если не инициализация)
+        if (!isInitializing) {
+            saveAllSettings();
+        }
+        
+        toastr.success(translations[currentLanguage].clear);
     });
 
     // Обработчик кнопки "Запустить сервер"
