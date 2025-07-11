@@ -5,6 +5,7 @@
     <title>Portal 2 Launcher</title>
     <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.min.css">
     <link rel="stylesheet" href="/bootstrap/5.0/bootstrap.dark.css">
+    <link rel="stylesheet" href="/bootstrap/bootstrap-icons-1.13.1/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/style.css"/>
     <link rel="stylesheet" href="/scroll.css">
     <link rel="stylesheet" href="/video.css">
@@ -105,13 +106,23 @@
         <!-- Command Preview for Single Map Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-            <div id="single-map-command-text" class="command-preview-text">
-                Пожалуйста, выберите карту.
+            <div class="command-preview-container">
+                <div id="single-map-command-text" class="command-preview-text">
+                    Пожалуйста, выберите карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-single-map-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
             <br>
             <strong class="command-preview-label" data-translate="terminalCommand">Команда запуска через терминал:</strong><br>
-            <div id="single-map-command-terminal-text" class="command-preview-text">
-                Пожалуйста, выберите главу и карту.
+            <div class="command-preview-container">
+                <div id="single-map-command-terminal-text" class="command-preview-text">
+                    Пожалуйста, выберите главу и карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-single-map-terminal-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
         </div>
     </div>
@@ -181,13 +192,23 @@
         <!-- Command Preview for Server Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-            <div id="create-server-command-text" class="command-preview-text">
-                Пожалуйста, выберите главу и карту.
+            <div class="command-preview-container">
+                <div id="create-server-command-text" class="command-preview-text">
+                    Пожалуйста, выберите главу и карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-create-server-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
             <br>
             <strong class="command-preview-label" data-translate="terminalCommand">Команда запуска через терминал:</strong><br>
-            <div id="create-server-command-terminal-text" class="command-preview-text">
-                Пожалуйста, выберите главу и карту.
+            <div class="command-preview-container">
+                <div id="create-server-command-terminal-text" class="command-preview-text">
+                    Пожалуйста, выберите главу и карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-create-server-terminal-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
         </div>
     </div>
@@ -222,13 +243,23 @@
         <!-- Command Preview for Connection -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-            <div id="connection-command-text" class="command-preview-text" data-translate="pleaseEnterIP">
-                Пожалуйста, введите IP-адрес сервера.
+            <div class="command-preview-container">
+                <div id="connection-command-text" class="command-preview-text" data-translate="pleaseEnterIP">
+                    Пожалуйста, введите IP-адрес сервера.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-connection-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
             <br>
             <strong class="command-preview-label" data-translate="terminalCommand">Команда запуска через терминал:</strong><br>
-            <div id="connection-command-terminal-text" class="command-preview-text" data-translate="pleaseEnterIP">
-                Пожалуйста, введите IP-адрес сервера.
+            <div class="command-preview-container">
+                <div id="connection-command-terminal-text" class="command-preview-text" data-translate="pleaseEnterIP">
+                    Пожалуйста, введите IP-адрес сервера.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-connection-terminal-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
         </div>
     </div>
@@ -279,14 +310,24 @@
         <!-- Command Preview for Split Screen Creation -->
         <div class="command-preview">
             <strong class="command-preview-label" data-translate="launchCommand">Команда запуска:</strong><br>
-            <div id="split-screen-command-text" class="command-preview-text" data-translate="pleaseSelectChapterAndMap">
-                Пожалуйста, выберите главу и карту.
+            <div class="command-preview-container">
+                <div id="split-screen-command-text" class="command-preview-text" data-translate="pleaseSelectChapterAndMap">
+                    Пожалуйста, выберите главу и карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-split-screen-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
 
             <br>
             <strong class="command-preview-label" data-translate="terminalCommand">Команда запуска через терминал:</strong><br>
-            <div id="split-screen-command-terminal-text" class="command-preview-text">
-                Пожалуйста, выберите главу и карту.
+            <div class="command-preview-container">
+                <div id="split-screen-command-terminal-text" class="command-preview-text">
+                    Пожалуйста, выберите главу и карту.
+                </div>
+                <button class="btn btn-sm btn-outline-secondary copy-command-btn" id="copy-split-screen-terminal-cmd" data-command="" title="Копировать команду">
+                    <i class="bi bi-clipboard"></i> Копировать
+                </button>
             </div>
         </div>
     </div>

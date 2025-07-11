@@ -146,6 +146,59 @@ let mods = {
 // Конфиги эмулятора стима (прямо в директори игры)
 const STEAM_CONFIG_PATH = path.join(PORTAL2_PATH, 'bin', 'steam_settings', 'configs.user.ini');
 
+// Функция для копирования текста в буфер обмена
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // Для современных браузеров
+        navigator.clipboard.writeText(text).then(() => {
+            toastr.success(translations[currentLanguage].copiedToClipboard || 'Скопировано в буфер обмена');
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            fallbackCopyToClipboard(text);
+        });
+    } else {
+        // Fallback для старых браузеров
+        fallbackCopyToClipboard(text);
+    }
+}
+
+// Fallback функция копирования
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        toastr.success(translations[currentLanguage].copiedToClipboard || 'Скопировано в буфер обмена');
+    } catch (err) {
+        console.error('Ошибка fallback копирования:', err);
+        toastr.error(translations[currentLanguage].copyFailed || 'Ошибка копирования');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Обработчик клика по кнопке копирования
+function handleCopyButtonClick(button) {
+    const commandText = button.getAttribute('data-command');
+    if (commandText && commandText !== 'Пожалуйста, выберите карту.' && 
+        commandText !== 'Пожалуйста, выберите главу и карту.' && 
+        commandText !== 'Пожалуйста, введите IP-адрес сервера.' &&
+        commandText !== 'Please select a map.' &&
+        commandText !== 'Please select chapter and map.' &&
+        commandText !== 'Please enter IP address.') {
+        copyToClipboard(commandText);
+    } else {
+        toastr.warning(translations[currentLanguage].noCommandToCopy || 'Нет команды для копирования');
+    }
+}
+
 // Функция для загрузки конфига Steam
 function loadSteamConfig() {
     if (fs.existsSync(STEAM_CONFIG_PATH)) {
@@ -458,9 +511,14 @@ const updateCreateServerCommandPreview = () => {
             });
             $('#create-server-command-text').text(cmd);
             $('#create-server-command-terminal-text').text(terminalCmd); // Терминальная команда
+            // Обновляем атрибуты кнопок копирования
+            $('#copy-create-server-cmd').attr('data-command', cmd);
+            $('#copy-create-server-terminal-cmd').attr('data-command', terminalCmd);
         } else {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
             $('#create-server-command-terminal-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+            $('#copy-create-server-cmd').attr('data-command', '');
+            $('#copy-create-server-terminal-cmd').attr('data-command', '');
         }
     } else {
         // Для неофициального набора карт проверяем только карту
@@ -473,9 +531,14 @@ const updateCreateServerCommandPreview = () => {
             });
             $('#create-server-command-text').text(cmd);
             $('#create-server-command-terminal-text').text(terminalCmd); // Терминальная команда
+            // Обновляем атрибуты кнопок копирования
+            $('#copy-create-server-cmd').attr('data-command', cmd);
+            $('#copy-create-server-terminal-cmd').attr('data-command', terminalCmd);
         } else {
             $('#create-server-command-text').text(translations[currentLanguage].pleaseSelectMap);
             $('#create-server-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
+            $('#copy-create-server-cmd').attr('data-command', '');
+            $('#copy-create-server-terminal-cmd').attr('data-command', '');
         }
     }
 };
@@ -492,9 +555,14 @@ const updateSplitScreenCommandPreview = () => {
             const { cmd, terminalCmd } = generateCommand('split-screen', { map, mapSet });
             $('#split-screen-command-text').text(cmd);
             $('#split-screen-command-terminal-text').text(terminalCmd); // Терминальная команда
+            // Обновляем атрибуты кнопок копирования
+            $('#copy-split-screen-cmd').attr('data-command', cmd);
+            $('#copy-split-screen-terminal-cmd').attr('data-command', terminalCmd);
         } else {
             $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
             $('#split-screen-command-terminal-text').text(translations[currentLanguage].pleaseSelectChapterAndMap);
+            $('#copy-split-screen-cmd').attr('data-command', '');
+            $('#copy-split-screen-terminal-cmd').attr('data-command', '');
         }
     } else {
         // Для неофициального набора карт проверяем только карту
@@ -502,9 +570,14 @@ const updateSplitScreenCommandPreview = () => {
             const { cmd, terminalCmd } = generateCommand('split-screen', { map, mapSet });
             $('#split-screen-command-text').text(cmd);
             $('#split-screen-command-terminal-text').text(terminalCmd); // Терминальная команда
+            // Обновляем атрибуты кнопок копирования
+            $('#copy-split-screen-cmd').attr('data-command', cmd);
+            $('#copy-split-screen-terminal-cmd').attr('data-command', terminalCmd);
         } else {
             $('#split-screen-command-text').text(translations[currentLanguage].pleaseSelectMap);
             $('#split-screen-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
+            $('#copy-split-screen-cmd').attr('data-command', '');
+            $('#copy-split-screen-terminal-cmd').attr('data-command', '');
         }
     }
 };
@@ -516,9 +589,14 @@ const updateConnectionCommandPreview = () => {
         const { cmd, terminalCmd } = generateCommand('connect', { ip });
         $('#connection-command-text').text(cmd);
         $('#connection-command-terminal-text').text(terminalCmd); // Терминальная команда
+        // Обновляем атрибуты кнопок копирования
+        $('#copy-connection-cmd').attr('data-command', cmd);
+        $('#copy-connection-terminal-cmd').attr('data-command', terminalCmd);
     } else {
         $('#connection-command-text').text(translations[currentLanguage].pleaseEnterIP);
         $('#connection-command-terminal-text').text(translations[currentLanguage].pleaseEnterIP);
+        $('#copy-connection-cmd').attr('data-command', '');
+        $('#copy-connection-terminal-cmd').attr('data-command', '');
     }
 };
 
@@ -531,9 +609,14 @@ const updateSingleMapCommandPreview = () => {
         const { cmd, terminalCmd } = generateCommand('single-map', { map, mapSet });
         $('#single-map-command-text').text(cmd);
         $('#single-map-command-terminal-text').text(terminalCmd); // Терминальная команда
+        // Обновляем атрибуты кнопок копирования
+        $('#copy-single-map-cmd').attr('data-command', cmd);
+        $('#copy-single-map-terminal-cmd').attr('data-command', terminalCmd);
     } else {
         $('#single-map-command-text').text(translations[currentLanguage].pleaseSelectMap);
         $('#single-map-command-terminal-text').text(translations[currentLanguage].pleaseSelectMap);
+        $('#copy-single-map-cmd').attr('data-command', '');
+        $('#copy-single-map-terminal-cmd').attr('data-command', '');
     }
 };
 
@@ -1033,5 +1116,10 @@ $(document).ready(() => {
                 toastr.error(translations[currentLanguage].pleaseSelectMap);
             }
         }
+    });
+
+    // Обработчики кнопок копирования команд
+    $(document).on('click', '.copy-command-btn', function() {
+        handleCopyButtonClick(this);
     });
 });

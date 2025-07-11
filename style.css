@@ -79,6 +79,8 @@ html, body {
     border-radius: 8px;
     margin-top: 20px;
     padding: 20px 20px 4em;
+    position: relative;
+    z-index: 2;
 }
 
 /* Header Image */
@@ -108,6 +110,14 @@ html, body {
     font-weight: bold;
 }
 
+/* Command Preview Container */
+.command-preview-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
 /* Command Preview Text */
 .command-preview-text {
     background: #f1af61;
@@ -117,9 +127,16 @@ html, body {
     display: inline-block;
     font-family: monospace;
     font-size: 14px;
-    margin-bottom: 15px;
     word-break: break-all;
-    min-width: 70%;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Copy Command Button */
+.copy-command-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
 /* Split Screen Mode Selection */

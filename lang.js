@@ -46,7 +46,10 @@ const translations = {
         generate: "Generate",
         steamIdGenerated: "New SteamID generated",
         accountNameGenerated: "New account name generated",
-        configSaved: "Steam settings saved successfully"
+        configSaved: "Steam settings saved successfully",
+        copiedToClipboard: "Copied to clipboard",
+        copyFailed: "Copy failed",
+        noCommandToCopy: "No command to copy"
     },
     ru: {
         iconSet1: "Набор иконок 1",
@@ -90,6 +93,9 @@ const translations = {
         generate: "Сгенерировать",
         steamIdGenerated: "Новый SteamID сгенерирован",
         accountNameGenerated: "Новое имя аккаунта сгенерировано",
-        configSaved: "Настройки Steam успешно сохранены"
+        configSaved: "Настройки Steam успешно сохранены",
+        copiedToClipboard: "Скопировано в буфер обмена",
+        copyFailed: "Ошибка копирования",
+        noCommandToCopy: "Нет команды для копирования"
     }
 };
