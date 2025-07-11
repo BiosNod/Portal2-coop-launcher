@@ -112,7 +112,7 @@ let mods = {
         image: 'portal2_revolution.png',
         fileName: 'revolution.exe',
         params: [],
-        path: PORTAL2_REVOLUTION_PATH + 'bin\\win64\\'
+        path: path.join(PORTAL2_REVOLUTION_PATH, 'bin', 'win64')
     }
 }
 
@@ -538,8 +538,8 @@ const updateSingleMapCommandPreview = () => {
 };
 
 function generateCommand(type, options = {}) {
-    const baseCmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console`;
-    const getMapIdentifer = (mapSet, map) => (!['official', 'super8'].includes(mapSet) ? path.basename(mapSet) + '/' : '') + map;
+    const baseCmd = `"${path.join(PORTAL2_PATH, 'portal2.exe')}" -steam -w ${screenWidth} -h ${screenHeight} -console`;
+    const getMapIdentifer = (mapSet, map) => (!['official', 'super8'].includes(mapSet) ? path.basename(mapSet) + path.sep : '') + map;
 
     let cmd = '';
     let terminalCmd = '';
@@ -933,7 +933,7 @@ $(document).ready(() => {
 
         const ip = $('#ipInput').val().trim();
         if (ip) {
-            const cmd = `"${PORTAL2_PATH}portal2.exe" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
+            const cmd = `"${path.join(PORTAL2_PATH, 'portal2.exe')}" -steam -w ${screenWidth} -h ${screenHeight} -console +connect ${ip}`;
             executeCommand(cmd);
         } else {
             toastr.error(translations[currentLanguage].pleaseEnterIP);
